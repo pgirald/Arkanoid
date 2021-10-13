@@ -11,14 +11,13 @@ namespace Arkanoid.Application.Utils
             _childs = new LinkedList<Component>();
         }
 
-        protected LinkedList<Component> _childs;
+        protected virtual LinkedList<Component> _childs { get; set; }
 
         public IEnumerable<Component> Childs => _childs;
 
         protected override LinkedListNode<Component> _addChildSecretly(Component child)
         {
-            LinkedListNode<Component> reference = new LinkedListNode<Component>(child);
-            _childs.AddLast(child);
+            LinkedListNode<Component> reference = _childs.AddLast(child);
             return reference;
         }
 
@@ -39,6 +38,19 @@ namespace Arkanoid.Application.Utils
                 throw new Exception("The specified child doesn't belong to this container");
             }
             child.Container = null;
+        }
+
+        public virtual void Clear()
+        {
+            foreach (Component child in _childs)
+            {
+                RemoveChild(child);
+            }
+        }
+
+        public bool IsEmpty()
+        {
+            return _childs.Count == 0;
         }
 
         public override float X

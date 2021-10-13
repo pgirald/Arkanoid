@@ -2,10 +2,9 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Arkanoid.Application.App.General
+namespace Arkanoid.Application.App.Components
 {
-    public enum BlockTypes
+    public static class KeyManager
     {
-        Block,
     }
 }

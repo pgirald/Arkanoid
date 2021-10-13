@@ -1,10 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using Arkanoid.Application.App.Components;
+using Arkanoid.Application.App.Components.Textures.Paddles;
+using Arkanoid.Application.App.Components.Textures.Projectiles;
+using Arkanoid.Application.Utils;
 
 namespace Arkanoid.Application.App
 {
-    class Scenario
+    public class Scenario : TexturesContainer
     {
+        public BlockSet Blocks { get; set; }
+
+        public Paddle Paddle { get; set; }
+
+        public Projectile Projectile { get; set; }
     }
 }

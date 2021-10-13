@@ -21,6 +21,7 @@ namespace Arkanoid.Application.Utils
         private LinkedListNode<Component> _reference;
         private Vector2 _posAlignmentValue = new Vector2();
         private Vector2 _previusOrigin;
+        public EventHandler Destroyed;
 
         protected virtual LinkedListNode<Component> _addChildSecretly(Component child)
         {

@@ -4,7 +4,7 @@ using System;
 
 namespace Arkanoid.Application.Utils
 {
-    public class TextureComponent : Component
+    public class TextureComponent : Component, ICloneable
     {
         public TextureComponent()
         {
@@ -16,6 +16,8 @@ namespace Arkanoid.Application.Utils
         public virtual string ParentPath { get => ""; }
 
         public virtual string TexturePath { get => throw new NotImplementedException(); }
+
+        public string FullPath => ParentPath + TexturePath;
 
         public Texture2D Texture
         {
@@ -50,6 +52,24 @@ namespace Arkanoid.Application.Utils
         public static implicit operator Texture2D(TextureComponent component)
         {
             return component._texture;
+        }
+
+
+        public void ShareTexture(TextureComponent textureComponent)
+        {
+            textureComponent.Texture = _texture;
+        }
+
+        public virtual T Clone<T>() where T : TextureComponent, new()
+        {
+            T textureComponent = new T();
+            textureComponent.Texture = _texture;
+            return textureComponent;
+        }
+
+        public object Clone()
+        {
+            return Clone<TextureComponent>();
         }
     }
 }

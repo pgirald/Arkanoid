@@ -1,5 +1,4 @@
-﻿using Arkanoid.Application.App;
-using Microsoft.Xna.Framework.Graphics;
+﻿using Microsoft.Xna.Framework.Graphics;
 
 namespace Arkanoid.Application.Utils
 {
@@ -18,13 +17,12 @@ namespace Arkanoid.Application.Utils
                 component.LayerDepth);
         }
 
-        public static void Draw(this SpriteBatch spriteBatch, BlocksSet container)
+        public static void Draw(this SpriteBatch spriteBatch, TexturesContainer container, SpriteEffects effects = SpriteEffects.None)
         {
-            foreach (BlocksRow row in container.Childs)
-                foreach (Block block in row.Childs)
-                {
-                    Draw(spriteBatch, block);
-                }
+            foreach (TextureComponent texture in container.Textures)
+            {
+                Draw(spriteBatch, texture, effects);
+            }
         }
     }
 }
