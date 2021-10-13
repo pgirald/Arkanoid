@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace Arkanoid.Application.Utils
 {
-    public class TexturesContainer : Container
+    public class TexturesContainer : Container, ITexturesContainer
     {
         public TexturesContainer()
         {
@@ -27,6 +27,11 @@ namespace Arkanoid.Application.Utils
         public void AddChild(TextureComponent child)
         {
             AddChild((Component)child);
+        }
+
+        public void AddChilds(IEnumerable<TextureComponent> childs)
+        {
+            AddChilds((IEnumerable<Component>)childs);
         }
 
         public virtual IEnumerable<TextureComponent> Textures => _textures;

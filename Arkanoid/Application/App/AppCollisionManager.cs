@@ -5,18 +5,25 @@ using System.Collections.Generic;
 
 namespace Arkanoid.Application.App
 {
-    public class AppColisionManager
+    public class AppCollisionManager
     {
-        public AppColisionManager(Scenario scenario)
+        public AppCollisionManager(ScenarioTemplate scenario)
         {
             Scenario = scenario;
             PaddleSubs = new LinkedList<CollideableComponent>();
             OwnContainerSubs = new LinkedList<CollideableComponent>();
             BlockSubs = new LinkedList<CollideableComponent>();
             MovingComponentsSubs = new LinkedList<CollideableComponent>();
+            Subscriptions = new LinkedList<CollideableComponent>[4];
+            Subscriptions[(int)Subscription.Paddle] = PaddleSubs;
+            Subscriptions[(int)Subscription.Container] = OwnContainerSubs;
+            Subscriptions[(int)Subscription.Block] = BlockSubs;
+            Subscriptions[(int)Subscription.MovingComps] = MovingComponentsSubs;
         }
 
-        private Scenario Scenario { get; set; }
+        private LinkedList<CollideableComponent>[] Subscriptions;
+
+        public ScenarioTemplate Scenario { get; private set; }
 
         private LinkedList<CollideableComponent> PaddleSubs { get; }
 
@@ -75,10 +82,12 @@ namespace Arkanoid.Application.App
 
         private void CheckBlockHit()
         {
-            foreach (CollideableComponent component in BlockSubs)
+            //Strange behaviour without foreach
+            BlockSubs.ForAll(component => CheckBlocksHit(component.Value));
+            /*foreach (CollideableComponent component in BlockSubs)
             {
                 CheckBlocksHit(component);
-            }
+            }*/
         }
 
         private void CheckBlocksHit(CollideableComponent component)
@@ -138,10 +147,26 @@ namespace Arkanoid.Application.App
         public void Clear()
         {
             Scenario = null;
-            PaddleSubs.Clear();
-            OwnContainerSubs.Clear();
-            BlockSubs.Clear();
-            MovingComponentsSubs.Clear();
+            foreach (Subscription subs in Enum.GetValues(typeof(Subscription)))
+            {
+                KickFromSubsbription(Subscriptions[(int)subs], subs);
+            }
+        }
+
+        public void Subscribe(CollideableComponent component, Subscription subscription)
+        {
+            component.CollisionKeys[(int)subscription] = Subscriptions[(int)subscription].AddLast(component);
+        }
+
+        public void Unsuscribe(CollideableComponent component, Subscription subscription)
+        {
+            Subscriptions[(int)subscription].Remove(component.CollisionKeys[(int)subscription]);
+            component.CollisionKeys[(int)subscription] = null;
+        }
+
+        private void KickFromSubsbription(LinkedList<CollideableComponent> subscriptors, Subscription subs)
+        {
+            subscriptors.ForAll(subscriptor => Unsuscribe(subscriptor.Value, subs));
         }
     }
 }

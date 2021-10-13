@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Arkanoid.Application.App;
+using System;
 using System.Collections.Generic;
 
 namespace Arkanoid.Application.Utils
@@ -31,6 +32,14 @@ namespace Arkanoid.Application.Utils
             child.Container = this;
         }
 
+        public virtual void AddChilds(IEnumerable<Component> childs)
+        {
+            foreach (Component child in childs)
+            {
+                AddChild(child);
+            }
+        }
+
         public virtual void RemoveChild(Component child)
         {
             if (child.Container != this)
@@ -42,10 +51,7 @@ namespace Arkanoid.Application.Utils
 
         public virtual void Clear()
         {
-            foreach (Component child in _childs)
-            {
-                RemoveChild(child);
-            }
+            _childs.ForAll(child => RemoveChild(child.Value));
         }
 
         public bool IsEmpty()

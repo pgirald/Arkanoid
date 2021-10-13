@@ -5,11 +5,11 @@ namespace Arkanoid.Application.App
 {
     public abstract class AnimatedComponent : TextureComponent, IAnimatedComponent
     {
-        public float Speed { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        public float Speed { get; set; }
 
         public void Move(float ellasedTime)
         {
-            Move(ellasedTime * Speed);
+            Proceed(ellasedTime * Speed);
         }
 
         protected abstract void Proceed(float trueSpeed);

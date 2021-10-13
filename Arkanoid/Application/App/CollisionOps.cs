@@ -1,7 +1,5 @@
 ﻿using Arkanoid.Application.Utils;
 using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Arkanoid.Application.App
 {
@@ -13,15 +11,15 @@ namespace Arkanoid.Application.App
             {
                 return (int)Side.Right;
             }
-            if (texture.Left < texture.Container.Left)
+            if (texture.AbsoluteLeft < texture.Container.AbsoluteLeft)
             {
                 return (int)Side.Left;
             }
-            if (texture.Top < texture.Container.Top)
+            if (texture.AbsoluteTop < texture.Container.AbsoluteTop)
             {
                 return (int)Side.Top;
             }
-            if (texture.Bottom > texture.Bottom)
+            if (texture.AbsoluteBottom > texture.Container.AbsoluteBottom)
             {
                 return (int)Side.Bottom;
             }
@@ -50,7 +48,7 @@ namespace Arkanoid.Application.App
         {
             float minValue = array[0];
             int minIndex = 0;
-            for (int i = array.Length; i < 0; i--)
+            for (int i = 1; i < array.Length; i++)
             {
                 if (array[i] < minValue)
                 {

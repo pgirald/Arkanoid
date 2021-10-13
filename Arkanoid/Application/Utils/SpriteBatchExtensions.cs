@@ -17,7 +17,7 @@ namespace Arkanoid.Application.Utils
                 component.LayerDepth);
         }
 
-        public static void Draw(this SpriteBatch spriteBatch, TexturesContainer container, SpriteEffects effects = SpriteEffects.None)
+        public static void Draw(this SpriteBatch spriteBatch, ITexturesContainer container, SpriteEffects effects = SpriteEffects.None)
         {
             foreach (TextureComponent texture in container.Textures)
             {

@@ -7,7 +7,7 @@ namespace Arkanoid.Application.App.Components.Textures.Paddles
     {
         public Paddle()
         {
-            Speed = 15f;
+            Speed = 500f;
         }
 
         protected override void Proceed(float trueSpeed)
@@ -32,10 +32,10 @@ namespace Arkanoid.Application.App.Components.Textures.Paddles
             switch (side)
             {
                 case Side.Left:
-                    Left = Container.Left;
+                    AbsoluteLeft = Container.AbsoluteLeft;
                     break;
                 case Side.Right:
-                    Right = Container.Right;
+                    AbsoluteRight = Container.AbsoluteRight;
                     break;
             }
         }

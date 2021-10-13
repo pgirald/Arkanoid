@@ -19,7 +19,6 @@ namespace Arkanoid.Application.Utils
         private float _height = 0;
         private Container _container;
         private LinkedListNode<Component> _reference;
-        private Vector2 _posAlignmentValue = new Vector2();
         private Vector2 _previusOrigin;
         public EventHandler Destroyed;
 
@@ -47,26 +46,6 @@ namespace Arkanoid.Application.Utils
         public Vector2 AbsolutePosition
         {
             get => _position;
-        }
-
-        public Alignment AbsolutePositionAlignment
-        {
-            set
-            {
-                _computePosition(value, 0, 0, ref _posAlignmentValue);
-                AbsoluteX = _posAlignmentValue.X;
-                AbsoluteY = _posAlignmentValue.Y;
-            }
-        }
-
-        public Alignment PositionAlignment
-        {
-            set
-            {
-                _computePosition(value, Container.AbsoluteLeft, Container.AbsoluteTop, ref _posAlignmentValue);
-                X = _posAlignmentValue.X;
-                Y = _posAlignmentValue.Y;
-            }
         }
 
         public virtual float X
@@ -213,6 +192,30 @@ namespace Arkanoid.Application.Utils
             }
         }
 
+        public float HorizontalCenter
+        {
+            get
+            {
+                return X + Width / 2 - Origin.X;
+            }
+            set
+            {
+                X = Origin.X + value - Width / 2;
+            }
+        }
+
+        public float VerticalCenter
+        {
+            get
+            {
+                return Y + Height / 2 - Origin.Y;
+            }
+            set
+            {
+                Y = Origin.Y + value - Height / 2;
+            }
+        }
+
         public float AbsoluteLeft
         {
             get
@@ -261,59 +264,38 @@ namespace Arkanoid.Application.Utils
             }
         }
 
+        public float AbsoluteHorizontalCenter
+        {
+            get
+            {
+                return AbsoluteX + Width / 2 - Origin.X;
+            }
+            set
+            {
+                AbsoluteX = Origin.X + value - Width / 2;
+            }
+        }
+
+        public float AbsoluteVerticalCenter
+        {
+            get
+            {
+                return AbsoluteY + Height / 2 - Origin.Y;
+            }
+            set
+            {
+                AbsoluteY = Origin.Y + value - Height / 2;
+            }
+        }
+
         private void _computeOrigin(Alignment mode, ref Vector2 origin)
         {
-            _computeVector(mode, Width, Height, 0, 0, ref origin);
+            ComponentOps.ComputeLocation(mode, Width, Height, 0, 0, ref origin);
         }
 
         private void _computePosition(Alignment mode, float zeroX, float zeroY, ref Vector2 position)
         {
-            _computeVector(mode, Container.Width, Container.Height, zeroX, zeroY, ref position);
-        }
-
-        private void _computeVector(Alignment mode, float width, float height, float zeroX, float zeroY, ref Vector2 vector)
-        {
-            switch (mode)
-            {
-                case Alignment.TopLeft:
-                    vector.X = zeroX;
-                    vector.Y = zeroY;
-                    return;
-                case Alignment.TopCenter:
-                    vector.X = zeroX + width / 2;
-                    vector.Y = zeroY;
-                    return;
-                case Alignment.TopRight:
-                    vector.X = zeroX + width;
-                    vector.Y = zeroY;
-                    return;
-                case Alignment.MiddleLeft:
-                    vector.X = zeroX;
-                    vector.Y = zeroY + height / 2;
-                    return;
-                case Alignment.MiddleCenter:
-                    vector.X = zeroX + width / 2;
-                    vector.Y = zeroY + height / 2;
-                    return;
-                case Alignment.MiddleRight:
-                    vector.X = zeroX + width;
-                    vector.Y = zeroY + height / 2;
-                    return;
-                case Alignment.BottomLeft:
-                    vector.X = zeroX;
-                    vector.Y = zeroY + height;
-                    return;
-                case Alignment.BottomCenter:
-                    vector.X = zeroX + width / 2;
-                    vector.Y = zeroY + height;
-                    return;
-                case Alignment.BottomRight:
-                    vector.X = zeroX + width;
-                    vector.Y = zeroY + height;
-                    return;
-            }
-
-            throw new Exception("Non-valid argument given to computeOrigin");
+            ComponentOps.ComputeLocation(mode, Container.Width, Container.Height, zeroX, zeroY, ref position);
         }
     }
 }

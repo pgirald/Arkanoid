@@ -1,7 +1,6 @@
 ﻿using Arkanoid.Application.App.Components.Textures.Blocks;
 using Arkanoid.Application.App.Components.Textures.Paddles;
 using Arkanoid.Application.Utils;
-using System;
 
 namespace Arkanoid.Application.App.Components.Textures.Projectiles
 {
@@ -9,13 +8,11 @@ namespace Arkanoid.Application.App.Components.Textures.Projectiles
     {
         public Projectile()
         {
-            Speed = 10f;
+            Speed = 300f;
         }
 
         private int _xDirection = 1;
         private int _yDirection = 1;
-
-        public EventHandler GameLost;
 
         public override string ParentPath => "Projectiles/";
 
@@ -32,27 +29,26 @@ namespace Arkanoid.Application.App.Components.Textures.Projectiles
             switch (side)
             {
                 case Side.Left:
-                    Left = Container.Left;
+                    AbsoluteLeft = Container.AbsoluteLeft;
                     _changeHorizontalDirection();
                     break;
                 case Side.Right:
-                    Right = Container.Right;
+                    AbsoluteRight = Container.AbsoluteRight;
                     _changeHorizontalDirection();
                     break;
                 case Side.Top:
-                    Top = Container.Top;
+                    AbsoluteTop = Container.AbsoluteTop;
                     _changeVerticalDirection();
                     break;
                 case Side.Bottom:
-                    Bottom = Container.Bottom;
-                    _changeVerticalDirection();
+                    Destroyed?.Invoke(this, null);
                     break;
             }
         }
 
         public override void OnPaddleHit(Paddle paddle, Side side)
         {
-            AbsoluteTop = paddle.AbsoluteTop;
+            AbsoluteBottom = paddle.AbsoluteTop;
             _changeVerticalDirection();
         }
 

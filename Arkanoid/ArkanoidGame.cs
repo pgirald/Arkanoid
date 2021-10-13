@@ -1,13 +1,9 @@
-﻿using Arkanoid.Application.App.Components;
-using Arkanoid.Application.App.Components.Textures.Blocks;
-using Arkanoid.Application.App.Components.Textures.Paddles;
-using Arkanoid.Application.App.Components.Textures.Projectiles;
+﻿using Arkanoid.Application.App;
 using Arkanoid.Application.App.General;
 using Arkanoid.Application.Utils;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
-using System;
 
 namespace Arkanoid
 {
@@ -15,6 +11,8 @@ namespace Arkanoid
     {
         private GraphicsDeviceManager _graphics;
         private SpriteBatch _spriteBatch;
+        private ClassicScenario Scenario;
+        private GameInfo info;
 
         public ArkanoidGame()
         {
@@ -26,7 +24,7 @@ namespace Arkanoid
         protected override void Initialize()
         {
             // TODO: Add your initialization logic here
-
+            info = new GameInfo();
             base.Initialize();
         }
 
@@ -34,7 +32,7 @@ namespace Arkanoid
         {
             _spriteBatch = new SpriteBatch(GraphicsDevice);
             TexturesFactory.Load(Content);
-
+            Scenario = new ClassicScenario(_graphics.PreferredBackBufferWidth, _graphics.PreferredBackBufferHeight);
             // TODO: use this.Content to load your game content here
         }
 
@@ -43,7 +41,8 @@ namespace Arkanoid
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
             // TODO: Add your update logic here
-            
+            info.ElapsedFrameTime = (float)gameTime.ElapsedGameTime.TotalSeconds;
+            Scenario.Run(info);
             base.Update(gameTime);
         }
 
@@ -55,7 +54,7 @@ namespace Arkanoid
             //_smily.draw(_spriteBatch, _smilyPosition);
 
             _spriteBatch.Begin();
-
+            _spriteBatch.Draw(Scenario);
             _spriteBatch.End();
 
             base.Draw(gameTime);
