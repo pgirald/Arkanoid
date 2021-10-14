@@ -1,6 +1,7 @@
 ﻿using Arkanoid.Application.App;
-using Arkanoid.Application.App.General;
-using Arkanoid.Application.Utils;
+using Arkanoid.Application.App.Graphics;
+using Arkanoid.Application.Utils.Game;
+using Arkanoid.Application.Utils.GeneralExtensions;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
@@ -11,7 +12,7 @@ namespace Arkanoid
     {
         private GraphicsDeviceManager _graphics;
         private SpriteBatch _spriteBatch;
-        private ClassicScenario Scenario;
+        private ArkanoidScenario Scenario;
         private GameInfo info;
 
         public ArkanoidGame()
@@ -25,6 +26,12 @@ namespace Arkanoid
         {
             // TODO: Add your initialization logic here
             info = new GameInfo();
+            Scenario = new ArkanoidScenario()
+            {
+                Width = _graphics.PreferredBackBufferWidth,
+                Height = _graphics.PreferredBackBufferHeight
+            };
+
             base.Initialize();
         }
 
@@ -32,7 +39,7 @@ namespace Arkanoid
         {
             _spriteBatch = new SpriteBatch(GraphicsDevice);
             TexturesFactory.Load(Content);
-            Scenario = new ClassicScenario(_graphics.PreferredBackBufferWidth, _graphics.PreferredBackBufferHeight);
+            Scenario.Initialize();
             // TODO: use this.Content to load your game content here
         }
 
@@ -48,7 +55,7 @@ namespace Arkanoid
 
         protected override void Draw(GameTime gameTime)
         {
-            GraphicsDevice.Clear(Color.CornflowerBlue);
+            GraphicsDevice.Clear(Color.Black);
 
             // TODO: Add your drawing code here
             //_smily.draw(_spriteBatch, _smilyPosition);
