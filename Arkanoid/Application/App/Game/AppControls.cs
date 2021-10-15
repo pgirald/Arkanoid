@@ -15,5 +15,7 @@ namespace Arkanoid.Application.App
         public static Keys Exit => Keys.Back;
 
         public static Keys Restart => Keys.R;
+
+        public static Keys Up => Keys.Up;
     }
 }

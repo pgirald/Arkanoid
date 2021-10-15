@@ -10,7 +10,7 @@ namespace Arkanoid.Application.App.Graphics
     {
         public CollideableTexture()
         {
-            SuscribedToComponents = new List<ICollideable>();
+            SuscribedToComponents = new LinkedList<ICollideable>();
             SpecialComponents = new Dictionary<Guid, ISpecialBehaviour>();
         }
 
@@ -18,7 +18,7 @@ namespace Arkanoid.Application.App.Graphics
 
         public Guid Key { get; set; }
 
-        public List<ICollideable> SuscribedToComponents { get; private set; }
+        public LinkedList<ICollideable> SuscribedToComponents { get; private set; }
 
         public Dictionary<Guid, ISpecialBehaviour> SpecialComponents { get; private set; }
 

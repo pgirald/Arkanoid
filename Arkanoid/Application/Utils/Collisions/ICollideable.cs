@@ -10,7 +10,7 @@ namespace Arkanoid.Application.Utils.Collisions
 
         public Guid Key { get; set; }
 
-        public List<ICollideable> SuscribedToComponents => EmptyCollideableListsFactory.EmptyComponentsList;
+        public LinkedList<ICollideable> SuscribedToComponents => EmptyCollideableListsFactory.EmptyComponentsList;
 
         public Dictionary<Guid, ISpecialBehaviour> SpecialComponents => EmptyCollideableListsFactory.EmptyCompsBehaviourDictionary;
 
@@ -21,7 +21,7 @@ namespace Arkanoid.Application.Utils.Collisions
 
         public CollisionInfo IntersectedWith(Component collideable)
         {
-            if(CollisionOps.AreIntersected((Component)this, collideable))
+            if (CollisionOps.AreIntersected((Component)this, collideable))
             {
                 return CollisionOps.GetCollisionInfo((Component)this, collideable);
             }

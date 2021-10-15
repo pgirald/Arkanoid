@@ -56,6 +56,18 @@
 /processorParam:TextureFormat=Color
 /build:Messages/Win.png
 
+#begin Paddles/Bullet.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Paddles/Bullet.png
+
 #begin Paddles/Paddle.png
 /importer:TextureImporter
 /processor:TextureProcessor

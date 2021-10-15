@@ -1,4 +1,5 @@
 ﻿using Arkanoid.Application.Utils.Game;
+using Arkanoid.Application.Utils.GeneralExtensions;
 using Arkanoid.Application.Utils.Textures;
 using System.Collections.Generic;
 
@@ -8,10 +9,12 @@ namespace Arkanoid.Application.App
     {
         public void SetateRun(ScenarioTemplate scenario, GameInfo info)
         {
-            foreach (IAnimated animated in scenario.GetAnimatedComponents())
+            scenario.AnimatedComponents.ForAll(animatedComp =>
             {
-                animated.Move(info.ElapsedFrameTime * animated.Speed);
-            }
+                IAnimated animated = (IAnimated)animatedComp.Value;
+                info.ComputedSpeed = info.ElapsedFrameTime * animated.Speed;
+                animated.Move(info);
+            });
             scenario.CheckForCollisions();
         }
 

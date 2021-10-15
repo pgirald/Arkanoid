@@ -1,6 +1,7 @@
 ﻿using Arkanoid.Application.App.Graphics.Enums;
 using Arkanoid.Application.Utils.Collisions;
 using Arkanoid.Application.Utils.Components;
+using Arkanoid.Application.Utils.Game;
 using System;
 
 namespace Arkanoid.Application.App.Graphics.Textures.Projectiles
@@ -35,8 +36,9 @@ namespace Arkanoid.Application.App.Graphics.Textures.Projectiles
 
         public override string TexturePath => "Projectile";
 
-        public override void Move(float computedSpeed)
+        public override void Move(GameInfo info)
         {
+            float computedSpeed = info.ComputedSpeed;
             if (Resting)
             {
                 return;

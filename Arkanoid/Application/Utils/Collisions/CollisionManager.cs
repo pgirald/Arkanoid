@@ -46,20 +46,23 @@ namespace Arkanoid.Application.Utils.Collisions
             sub.Key = Guid.Empty;
             _subscribers.Remove(sub.ManagerKey);
             sub.ManagerKey = null;
+            sub.SuscribedToComponents.Clear();
+            sub.SpecialComponents.Clear();
         }
 
         public void LookForCollisions()
         {
+            CollisionInfo info;
             _subscribers.ForAll(sub =>
             {
-                foreach (ICollideable collideable in sub.Value.SuscribedToComponents)
+                sub.Value.SuscribedToComponents.ForAll(collideable =>
                 {
-                    CollisionInfo info = collideable.IntersectedWith((Component)sub.Value);
+                    info = collideable.Value.IntersectedWith((Component)sub.Value);
                     if (info != null)
                     {
-                        Notify(sub.Value, collideable, info);
+                        Notify(sub.Value, collideable.Value, info);
                     }
-                }
+                });
             });
         }
 
@@ -78,7 +81,7 @@ namespace Arkanoid.Application.Utils.Collisions
             {
                 throw new Exception("One of the specified components is not a subscriber");
             }
-            collideableSub.SuscribedToComponents.Add(collideable);
+            collideableSub.SuscribedToComponents.AddLast(collideable);
         }
 
         public void SubscribeToComponents(ICollideable collideableSub, params ICollideable[] collideables)

@@ -1,12 +1,13 @@
-﻿using Microsoft.Xna.Framework;
-using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using Microsoft.Xna.Framework.Input;
 
 namespace Arkanoid.Application.Utils.Game
 {
     public struct GameInfo
     {
         public float ElapsedFrameTime { get; set; }
+
+        public float ComputedSpeed { get; set; }
+
+        public KeyboardState KeyboardState { get; set; }
     }
 }

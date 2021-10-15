@@ -49,6 +49,7 @@ namespace Arkanoid
                 Exit();
             // TODO: Add your update logic here
             info.ElapsedFrameTime = (float)gameTime.ElapsedGameTime.TotalSeconds;
+            info.KeyboardState = Keyboard.GetState();
             Scenario.Run(info);
             base.Update(gameTime);
         }

@@ -1,4 +1,5 @@
-﻿using Arkanoid.Application.App.Graphics;
+﻿using Arkanoid.Application.App.Game.Scenarios;
+using Arkanoid.Application.App.Graphics;
 using Arkanoid.Application.App.Graphics.CollisionBehaviours;
 using Arkanoid.Application.App.Graphics.Textures.Blocks;
 using Arkanoid.Application.App.Graphics.Textures.Paddles;
@@ -6,6 +7,7 @@ using Arkanoid.Application.App.Graphics.Textures.Projectiles;
 using Arkanoid.Application.Utils.Collisions;
 using Arkanoid.Application.Utils.Components;
 using Arkanoid.Application.Utils.Game;
+using Arkanoid.Application.Utils.Game.DynamicDrawing;
 using Microsoft.Xna.Framework;
 using System;
 using System.Collections.Generic;
@@ -14,9 +16,11 @@ namespace Arkanoid.Application.App
 {
     public class ArkanoidScenario : ScenarioTemplate
     {
-        private Paddle paddle;
-        private Projectile projectile;
-        private BlockSet blocks;
+        public Paddle paddle { get; private set; }
+
+        public Projectile projectile { get; private set; }
+
+        public BlockSet blocks { get; private set; }
 
         protected override void AddAnimatedComponents()
         {
@@ -24,9 +28,14 @@ namespace Arkanoid.Application.App
             AnimatedComponents.AddLast(projectile);
         }
 
+        protected override ScenarioUtils CreateScenarioUtils()
+        {
+            return new ArkanoidScenarioUtils(this, base.CreateScenarioUtils());
+        }
+
         protected override IEnumerable<Component> CreateGameItems()
         {
-            paddle = TexturesFactory.GetTextureClone<Paddle>();
+            paddle = TexturesFactory.GetTextureClone<GunPaddle>();
             projectile = TexturesFactory.GetTextureClone<Projectile>();
             blocks = CreateSimpleBlocks();
             yield return paddle;
@@ -43,6 +52,7 @@ namespace Arkanoid.Application.App
             projectile.PutOn(paddle, Alignment.TopCenter);
             projectile.AbsoluteBottom -= 0.1f;
             paddle.Projectile = projectile;
+            AddDrawer((IDrawer)paddle);
         }
 
         protected override void SubscribeToCM(CollisionManager CM)
@@ -56,13 +66,11 @@ namespace Arkanoid.Application.App
 
         private void OnProjectileDestroyed(object sender, EventArgs args)
         {
-            projectile.Destroyed -= OnProjectileDestroyed;
             CurrentState = new GameOver(this);
         }
 
         private void OnBlocksDestroyed(object sender, EventArgs args)
         {
-            blocks.Destroyed -= OnBlocksDestroyed;
             CurrentState = new GameFinished(this);
             Clear();
         }
@@ -79,6 +87,13 @@ namespace Arkanoid.Application.App
                 blocks.next();
             }
             return blocks;
+        }
+
+        public override void Clear()
+        {
+            base.Clear();
+            blocks.Destroyed -= OnBlocksDestroyed;
+            projectile.Destroyed -= OnProjectileDestroyed;
         }
 
         protected override IScenarioState GetInitialState()

@@ -1,8 +1,11 @@
 ﻿using Arkanoid.Application.Utils.Collisions;
 using Arkanoid.Application.Utils.Components;
+using Arkanoid.Application.Utils.Game.DynamicDrawing;
+using Arkanoid.Application.Utils.GeneralExtensions;
 using Arkanoid.Application.Utils.Textures;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Arkanoid.Application.Utils.Game
 {
@@ -11,7 +14,22 @@ namespace Arkanoid.Application.Utils.Game
         public ScenarioTemplate()
         {
             AnimatedComponents = new LinkedList<Component>();
+            Drawers = new LinkedList<IDrawer>();
+            Draws = new LinkedList<IScenarioDraw>();
             CM = new CollisionManager();
+            Utils = CreateScenarioUtils();
+        }
+
+        private ScenarioUtils Utils;
+
+        protected virtual ScenarioUtils CreateScenarioUtils()
+        {
+            return new ScenarioUtils()
+            {
+                CM = CM,
+                AnimatedComponents = AnimatedComponents,
+                Scenario = this
+            };
         }
 
         private CollisionManager CM;
@@ -22,14 +40,12 @@ namespace Arkanoid.Application.Utils.Game
 
         public IScenarioState CurrentState { get; set; }
 
-        public IEnumerable<Component> GetAnimatedComponents() => AnimatedComponents;
-
         public void CheckForCollisions()
         {
             CM.LookForCollisions();
         }
 
-        protected LinkedList<Component> AnimatedComponents { get; private set; }
+        public LinkedList<Component> AnimatedComponents { get; private set; }
 
         protected abstract IEnumerable<Component> CreateGameItems();
 
@@ -40,6 +56,54 @@ namespace Arkanoid.Application.Utils.Game
         protected abstract void SubscribeToCM(CollisionManager CM);
 
         protected abstract IScenarioState GetInitialState();
+
+        private LinkedList<IScenarioDraw> Draws;
+
+        private LinkedList<IDrawer> Drawers;
+
+        public void AddDrawer(IDrawer drawer)
+        {
+            drawer.ScenarioKey = Drawers.AddLast(drawer);
+            drawer.DrawComponent += OnComponentDrawn;
+        }
+
+        public void AddDrawers(params IDrawer[] drawers)
+        {
+            foreach (IDrawer drawer in drawers)
+            {
+                AddDrawer(drawer);
+            }
+        }
+
+        public void RemoveDrawer(IDrawer drawer)
+        {
+            Drawers.Remove(drawer.ScenarioKey);
+            drawer.ScenarioKey = null;
+            drawer.DrawComponent -= OnComponentDrawn;
+        }
+
+        protected virtual void OnComponentDrawn(object sender, DrawEventArgs args)
+        {
+            args.Draw.ScenarioKey = Draws.AddLast(args.Draw);
+            args.Draw.Draw(Utils);
+            ((Component)args.Draw).Destroyed += OnDrawDestroyed;
+            ((Component)args.Draw).Container = this;
+        }
+
+        private void OnDrawDestroyed(object sender, EventArgs args)
+        {
+            IScenarioDraw draw = (IScenarioDraw)sender;
+            RemoveDraw(draw);
+        }
+
+        private void RemoveDraw(IScenarioDraw draw)
+        {
+            draw.Erase(Utils);
+            Draws.Remove(draw.ScenarioKey);
+            draw.ScenarioKey = null;
+            ((Component)draw).Destroyed -= OnDrawDestroyed;
+            ((Component)draw).Container = null;
+        }
 
         public virtual void Initialize()
         {
@@ -71,9 +135,21 @@ namespace Arkanoid.Application.Utils.Game
 
         public override void Clear()
         {
-            CM.Clear();
+            ClearDrawers();
+            ClearDraws();
             AnimatedComponents.Clear();
+            CM.Clear();
             base.Clear();
+        }
+
+        private void ClearDrawers()
+        {
+            Drawers.ForAll(drawer => RemoveDrawer(drawer.Value));
+        }
+
+        private void ClearDraws()
+        {
+            Draws.ForAll(draw => RemoveDraw(draw.Value));
         }
 
         public CollisionInfo IntersectedWith(Component collideable)

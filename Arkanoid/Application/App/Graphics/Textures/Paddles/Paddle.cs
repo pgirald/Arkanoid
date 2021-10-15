@@ -2,6 +2,7 @@
 using Arkanoid.Application.App.Graphics.Textures.Projectiles;
 using Arkanoid.Application.Utils.Collisions;
 using Arkanoid.Application.Utils.Components;
+using Arkanoid.Application.Utils.Game;
 using Microsoft.Xna.Framework.Input;
 using System;
 
@@ -9,6 +10,12 @@ namespace Arkanoid.Application.App.Graphics.Textures.Paddles
 {
     public class Paddle : AnimatedTexture
     {
+        public static string PaddleParentPath => "Paddles/";
+
+        public override string ParentPath => PaddleParentPath;
+
+        public override string TexturePath => "Paddle";
+
         public Paddle()
         {
             Speed = 500f;
@@ -18,9 +25,10 @@ namespace Arkanoid.Application.App.Graphics.Textures.Paddles
         private float RightBound;
         private Projectile _projectile;
 
-        public override void Move(float computedSpeed)
+        public override void Move(GameInfo info)
         {
-            KeyboardState state = AppControls.State;
+            float computedSpeed = info.ComputedSpeed;
+            KeyboardState state = info.KeyboardState;
             float direction = 0;
             if (state.IsKeyDown(AppControls.Right))
             {
@@ -73,10 +81,6 @@ namespace Arkanoid.Application.App.Graphics.Textures.Paddles
                 ResetProjectileBounds();
             }
         }
-
-        public override string ParentPath => "Paddles/";
-
-        public override string TexturePath => "Paddle";
 
         public override void OnCollision(Component collideable, CollisionInfo info)
         {

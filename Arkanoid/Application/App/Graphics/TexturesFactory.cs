@@ -12,6 +12,7 @@ namespace Arkanoid.Application.App.Graphics
     public static class TexturesFactory
     {
         private static Dictionary<string, TextureComponent> Textures;
+        private static Dictionary<string, Texture2D> Textures2D;
         private static bool FirstTime = true;
 
         private static Type[] TextureTypes
@@ -39,12 +40,22 @@ namespace Arkanoid.Application.App.Graphics
             FirstTime = false;
 
             Textures = new Dictionary<string, TextureComponent>(StringComparer.Create(CultureInfo.InvariantCulture, true));
+            Textures2D = new Dictionary<string, Texture2D>();
+            Texture2D texture;
 
             foreach (Type textureType in TextureTypes)
             {
                 TextureComponent textureComponent = (TextureComponent)Activator.CreateInstance(textureType);
-                textureComponent.Texture = content.Load<Texture2D>(textureComponent.FullPath);
-                Textures.Add(textureType.FullName, textureComponent);
+                if (Textures2D.TryGetValue(textureComponent.FullPath, out texture))
+                {
+                    textureComponent.Texture = texture;
+                }
+                else
+                {
+                    textureComponent.Texture = content.Load<Texture2D>(textureComponent.FullPath);
+                    Textures2D.Add(textureComponent.FullPath, textureComponent);
+                    Textures.Add(textureType.FullName, textureComponent);
+                }
             }
         }
 

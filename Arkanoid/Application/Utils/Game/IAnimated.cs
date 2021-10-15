@@ -6,6 +6,6 @@ namespace Arkanoid.Application.Utils.Game
     {
         public float Speed { get; set; }
 
-        public abstract void Move(float computedSpeed);
+        public abstract void Move(GameInfo info);
     }
 }
