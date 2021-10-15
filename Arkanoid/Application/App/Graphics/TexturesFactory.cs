@@ -21,8 +21,8 @@ namespace Arkanoid.Application.App.Graphics
                 string texturesNamespace = nameof(Arkanoid) + "." +
                     nameof(Application) + "." +
                     nameof(App) + "." +
-                    nameof(Components) + "." +
-                    nameof(Components.Textures);
+                    nameof(Graphics) + "." +
+                    nameof(Graphics.Textures) + ".";
                 return Assembly.GetExecutingAssembly().GetTypes().
                 Where(t => t.FullName.StartsWith(texturesNamespace)).
                 ToArray();

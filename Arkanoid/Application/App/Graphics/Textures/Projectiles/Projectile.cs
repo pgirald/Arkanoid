@@ -1,11 +1,11 @@
-﻿using Arkanoid.Application.App.Graphics.Textures.Blocks;
-using Arkanoid.Application.App.Graphics.Textures.Paddles;
+﻿using Arkanoid.Application.App.Graphics.Enums;
 using Arkanoid.Application.Utils.Collisions;
+using Arkanoid.Application.Utils.Components;
 using System;
 
 namespace Arkanoid.Application.App.Graphics.Textures.Projectiles
 {
-    public class Projectile : CollideableComponent, IAnimatedComponent
+    public class Projectile : AnimatedTexture
     {
         public Projectile()
         {
@@ -35,83 +35,51 @@ namespace Arkanoid.Application.App.Graphics.Textures.Projectiles
 
         public override string TexturePath => "Projectile";
 
-        protected override void Proceed(float trueSpeed)
+        public override void Move(float computedSpeed)
         {
             if (Resting)
             {
                 return;
             }
-            X += trueSpeed * _xDirection;
-            Y -= trueSpeed * _yDirection;
+            X += computedSpeed * _xDirection;
+            Y -= computedSpeed * _yDirection;
         }
 
-        public override void OnContainerHit(Side side)
+        public override void OnCollision(Component collideable, CollisionInfo info)
         {
+            Side side = info.Side;
             switch (side)
             {
                 case Side.Left:
-                    AbsoluteLeft = Container.AbsoluteLeft;
-                    _changeHorizontalDirection();
+                    AbsoluteRight = info.CollisionSidePosition;
+                    ChangeHorizontalDirection();
                     break;
                 case Side.Right:
-                    AbsoluteRight = Container.AbsoluteRight;
-                    _changeHorizontalDirection();
+                    AbsoluteLeft = info.CollisionSidePosition;
+                    ChangeHorizontalDirection();
                     break;
                 case Side.Top:
-                    AbsoluteTop = Container.AbsoluteTop;
-                    _changeVerticalDirection();
+                    AbsoluteBottom = info.CollisionSidePosition;
+                    ChangeVerticalDirection();
                     break;
                 case Side.Bottom:
-                    Destroyed?.Invoke(this, null);
+                    AbsoluteTop = info.CollisionSidePosition;
+                    ChangeVerticalDirection();
                     break;
             }
         }
 
-        public override void OnPaddleHit(Paddle paddle, Side side)
+        public void FixTo(ProjectileDirection direction)
         {
-            AbsoluteBottom = paddle.AbsoluteTop;
-            _changeVerticalDirection();
+            _xDirection = (int)direction;
         }
 
-        public override void OnBlockHit(Block block, Side side)
-        {
-            switch (side)
-            {
-                case Side.Left:
-                    AbsoluteLeft = block.AbsoluteRight;
-                    _changeHorizontalDirection();
-                    break;
-                case Side.Right:
-                    AbsoluteRight = block.AbsoluteLeft;
-                    _changeHorizontalDirection();
-                    break;
-                case Side.Top:
-                    AbsoluteTop = block.AbsoluteBottom;
-                    _changeVerticalDirection();
-                    break;
-                case Side.Bottom:
-                    AbsoluteBottom = block.AbsoluteTop;
-                    _changeVerticalDirection();
-                    break;
-            }
-        }
-
-        public void FixToLeft()
-        {
-            _xDirection = -1;
-        }
-
-        public void FixToRight()
-        {
-            _xDirection = 1;
-        }
-
-        public void _changeHorizontalDirection()
+        public void ChangeHorizontalDirection()
         {
             _xDirection *= -1;
         }
 
-        public void _changeVerticalDirection()
+        public void ChangeVerticalDirection()
         {
             _yDirection *= -1;
         }

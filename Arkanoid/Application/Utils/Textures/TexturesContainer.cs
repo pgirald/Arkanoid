@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace Arkanoid.Application.Utils.Textures
 {
-    public class TexturesContainer : Container, ITexturesContainer
+    public class TexturesContainer : Container, IDrawable
     {
         public TexturesContainer()
         {

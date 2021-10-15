@@ -1,8 +1,8 @@
-﻿using Arkanoid.Application.Utils.Collisions;
+﻿using Arkanoid.Application.Utils.Textures;
 
 namespace Arkanoid.Application.App.Graphics.Textures.Blocks
 {
-    public class Block : CollideableComponent, ICollideableComponent
+    public class Block : TextureComponent
     {
         public override string ParentPath => "Blocks/";
 
@@ -16,14 +16,9 @@ namespace Arkanoid.Application.App.Graphics.Textures.Blocks
 
         public float MarginBottom { get; set; } = 0;
 
-        public override void OnMovingComponentHit(CollideableComponent component, Side side)
+        public virtual void Hit()
         {
             Destroyed?.Invoke(this, null);
-        }
-
-        protected override void Proceed(float trueSpeed)
-        {
-            throw new System.NotImplementedException();
         }
     }
 }

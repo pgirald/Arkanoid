@@ -59,18 +59,18 @@ namespace Arkanoid.Application.Utils.Components
             {
                 case Alignment.TopLeft:
                     _comp.AbsoluteLeft = comp.AbsoluteLeft;
-                    _comp.AbsoluteTop = comp.AbsoluteTop;
+                    _comp.AbsoluteBottom = comp.AbsoluteTop;
                     return;
                 case Alignment.TopCenter:
                     _comp.AbsoluteHorizontalCenter = comp.AbsoluteHorizontalCenter;
-                    _comp.AbsoluteTop = comp.AbsoluteTop;
+                    _comp.AbsoluteBottom = comp.AbsoluteTop;
                     return;
                 case Alignment.TopRight:
                     _comp.AbsoluteRight = comp.AbsoluteRight;
-                    _comp.AbsoluteTop = comp.AbsoluteTop;
+                    _comp.AbsoluteBottom = comp.AbsoluteTop;
                     return;
                 case Alignment.MiddleLeft:
-                    _comp.AbsoluteLeft = comp.AbsoluteLeft;
+                    _comp.AbsoluteRight = comp.AbsoluteLeft;
                     _comp.AbsoluteVerticalCenter = comp.AbsoluteVerticalCenter;
                     return;
                 case Alignment.MiddleCenter:
@@ -78,20 +78,20 @@ namespace Arkanoid.Application.Utils.Components
                     _comp.AbsoluteVerticalCenter = comp.AbsoluteVerticalCenter;
                     return;
                 case Alignment.MiddleRight:
-                    _comp.AbsoluteRight = comp.AbsoluteRight;
+                    _comp.AbsoluteLeft = comp.AbsoluteRight;
                     _comp.AbsoluteVerticalCenter = comp.AbsoluteVerticalCenter;
                     return;
                 case Alignment.BottomLeft:
                     _comp.AbsoluteLeft = comp.AbsoluteLeft;
-                    _comp.AbsoluteBottom = comp.AbsoluteBottom;
+                    _comp.AbsoluteTop = comp.AbsoluteBottom;
                     return;
                 case Alignment.BottomCenter:
                     _comp.AbsoluteHorizontalCenter = comp.AbsoluteHorizontalCenter;
-                    _comp.AbsoluteBottom = comp.AbsoluteBottom;
+                    _comp.AbsoluteTop = comp.AbsoluteBottom;
                     return;
                 case Alignment.BottomRight:
                     _comp.AbsoluteRight = comp.AbsoluteRight;
-                    _comp.AbsoluteBottom = comp.AbsoluteBottom;
+                    _comp.AbsoluteTop = comp.AbsoluteBottom;
                     return;
             }
         }

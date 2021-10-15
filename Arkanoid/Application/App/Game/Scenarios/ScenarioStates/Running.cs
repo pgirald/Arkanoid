@@ -1,5 +1,4 @@
-﻿using Arkanoid.Application.Utils.Collisions;
-using Arkanoid.Application.Utils.Game;
+﻿using Arkanoid.Application.Utils.Game;
 using Arkanoid.Application.Utils.Textures;
 using System.Collections.Generic;
 
@@ -9,16 +8,22 @@ namespace Arkanoid.Application.App
     {
         public void SetateRun(ScenarioTemplate scenario, GameInfo info)
         {
-            foreach (CollideableComponent component in scenario.GetMovingComponents())
+            foreach (IAnimated animated in scenario.GetAnimatedComponents())
             {
-                component.Move(info.ElapsedFrameTime);
+                animated.Move(info.ElapsedFrameTime * animated.Speed);
             }
             scenario.CheckForCollisions();
         }
 
         public IEnumerable<TextureComponent> StateTextures(ScenarioTemplate scenario)
         {
-            return scenario.GameTextures;
+            foreach (IDrawable drawable in scenario.GameTextures)
+            {
+                foreach (TextureComponent texture in drawable.Textures)
+                {
+                    yield return texture;
+                }
+            }
         }
     }
 }

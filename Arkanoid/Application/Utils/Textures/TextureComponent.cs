@@ -2,10 +2,11 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
+using System.Collections.Generic;
 
 namespace Arkanoid.Application.Utils.Textures
 {
-    public class TextureComponent : Component, ICloneable
+    public class TextureComponent : Component, ICloneable, IDrawable
     {
         public TextureComponent()
         {
@@ -71,6 +72,14 @@ namespace Arkanoid.Application.Utils.Textures
         public object Clone()
         {
             return Clone<TextureComponent>();
+        }
+
+        public IEnumerable<TextureComponent> Textures
+        {
+            get
+            {
+                yield return this;
+            }
         }
     }
 }

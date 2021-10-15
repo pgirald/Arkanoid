@@ -1,97 +1,62 @@
-﻿using Arkanoid.Application.App;
-using Arkanoid.Application.App.Graphics;
-using Arkanoid.Application.App.Graphics.Textures.Paddles;
-using Arkanoid.Application.App.Graphics.Textures.Projectiles;
-using Arkanoid.Application.Utils.Collisions;
+﻿using Arkanoid.Application.Utils.Collisions;
+using Arkanoid.Application.Utils.Components;
 using Arkanoid.Application.Utils.Textures;
 using System;
 using System.Collections.Generic;
 
 namespace Arkanoid.Application.Utils.Game
 {
-    public abstract class ScenarioTemplate : Container, ITexturesContainer
+    public abstract class ScenarioTemplate : Container, IDrawable, ICollideable
     {
         public ScenarioTemplate()
         {
-            MovingComponents = new LinkedList<CollideableComponent>();
+            AnimatedComponents = new LinkedList<Component>();
+            CM = new CollisionManager();
         }
 
-        private AppCollisionManager CM;
+        private CollisionManager CM;
 
-        public IEnumerable<TextureComponent> Textures => CurrentState.StateTextures(this);
+        public virtual IEnumerable<TextureComponent> Textures => CurrentState.StateTextures(this);
 
-        public IEnumerable<TextureComponent> GameTextures => GameItems;
+        public virtual IEnumerable<Component> GameTextures => _childs;
 
         public IScenarioState CurrentState { get; set; }
 
-        public BlockSet Blocks { get; protected set; }
-
-        public Paddle Paddle { get; protected set; }
-
-        public Projectile Projectile { get; protected set; }
-
-        public IEnumerable<CollideableComponent> GetMovingComponents() => MovingComponents;
+        public IEnumerable<Component> GetAnimatedComponents() => AnimatedComponents;
 
         public void CheckForCollisions()
         {
-            CM.CheckScenarioCollisions();
+            CM.LookForCollisions();
         }
 
-        protected LinkedList<CollideableComponent> MovingComponents { get; set; }
+        protected LinkedList<Component> AnimatedComponents { get; private set; }
 
-        protected abstract void CreateGameItems();
+        protected abstract IEnumerable<Component> CreateGameItems();
+
         protected abstract void SetGameItems();
+
+        protected abstract void AddAnimatedComponents();
+
+        protected abstract void SubscribeToCM(CollisionManager CM);
+
+        protected abstract IScenarioState GetInitialState();
 
         public virtual void Initialize()
         {
-            CreateGameItems();
-            CM = new AppCollisionManager(this);
-            MovingComponents.AddLast(Paddle);
-            MovingComponents.AddLast(Projectile);
-            AddChilds(MovingComponents);
-            Blocks.Container = this;
-            Paddle.Container = this;
-            Projectile.Container = this;
-            Blocks.Destroyed += OnBlocksDestroyed;
-            Projectile.Destroyed += OnProjectileDestroyed;
-            CM.Subscribe(Paddle, Subscription.Container);
-            CM.Subscribe(Projectile, Subscription.Container);
-            CM.Subscribe(Projectile, Subscription.Paddle);
-            CM.Subscribe(Projectile, Subscription.Block);
-            CM.Subscribe(Projectile, Subscription.MovingComps);
-            SetGameItems();
-            CurrentState = new Running();
-        }
-
-        protected virtual IEnumerable<TextureComponent> GameItems
-        {
-            get
+            foreach (Component component in CreateGameItems())
             {
-                yield return Projectile;
-                yield return Paddle;
-                foreach (TextureComponent texture in Blocks.Textures)
-                {
-                    yield return texture;
-                }
-                foreach (TextureComponent texture in MovingComponents)
-                {
-                    yield return texture;
-                }
+                component.Container = this;
             }
+            SetGameItems();
+            AddAnimatedComponents();
+            AddChilds(AnimatedComponents);
+            SubscribeToCM(CM);
+            CurrentState = GetInitialState();
         }
 
-        private void OnProjectileDestroyed(object sender, EventArgs args)
-        {
-            Projectile.Destroyed -= OnProjectileDestroyed;
-            CurrentState = new GameOver(this);
-        }
+        public LinkedListNode<ICollideable> ManagerKey { get; set; }
 
-        private void OnBlocksDestroyed(object sender, EventArgs args)
-        {
-            Blocks.Destroyed -= OnBlocksDestroyed;
-            CurrentState = new GameFinished(this);
-            Clear();
-        }
+        public Guid Key { get; set; }
 
         public void Restart()
         {
@@ -107,11 +72,29 @@ namespace Arkanoid.Application.Utils.Game
         public override void Clear()
         {
             CM.Clear();
-            Blocks.Clear();
-            MovingComponents.Clear();
-            Paddle = null;
-            Projectile = null;
+            AnimatedComponents.Clear();
             base.Clear();
+        }
+
+        public CollisionInfo IntersectedWith(Component collideable)
+        {
+            if (collideable.AbsoluteRight > AbsoluteRight)
+            {
+                return new CollisionInfo { Side = Side.Right, CollisionSidePosition = AbsoluteRight };
+            }
+            if (collideable.AbsoluteTop < AbsoluteTop)
+            {
+                return new CollisionInfo { Side = Side.Top, CollisionSidePosition = AbsoluteTop };
+            }
+            if (collideable.AbsoluteLeft < AbsoluteLeft)
+            {
+                return new CollisionInfo { Side = Side.Left, CollisionSidePosition = AbsoluteLeft };
+            }
+            if (collideable.AbsoluteBottom > AbsoluteBottom)
+            {
+                return new CollisionInfo { Side = Side.Bottom, CollisionSidePosition = AbsoluteBottom };
+            }
+            return null;
         }
     }
 }

@@ -1,12 +1,14 @@
 ﻿using Arkanoid.Application.App.Graphics.Textures.Blocks;
+using Arkanoid.Application.Utils.Collisions;
 using Arkanoid.Application.Utils.Components;
 using Arkanoid.Application.Utils.Textures;
 using Microsoft.Xna.Framework;
 using System;
+using System.Collections.Generic;
 
 namespace Arkanoid.Application.App.Graphics
 {
-    public class BlockSet : TexturesContainer
+    public class BlockSet : TexturesContainer, ICollideable
     {
         private float _currentXPosition = 0;
         private float _currentYPosition = 0;
@@ -42,6 +44,10 @@ namespace Arkanoid.Application.App.Graphics
             }
         }
 
+        public LinkedListNode<ICollideable> ManagerKey { get; set; }
+
+        public Guid Key { get; set; }
+
         public void next()
         {
             _currentXPosition = 0;
@@ -69,6 +75,25 @@ namespace Arkanoid.Application.App.Graphics
             {
                 Destroyed?.Invoke(this, null);
             }
+        }
+
+        public CollisionInfo IntersectedWith(Component collideable)
+        {
+            if (!CollisionOps.AreIntersected(this, collideable))
+            {
+                return null;
+            }
+            CollisionInfo info = null;
+            foreach (Block child in _childs)
+            {
+                if (CollisionOps.AreIntersected(collideable, child))
+                {
+                    child.Hit();
+                    info = CollisionOps.GetCollisionInfo(collideable, child);
+                    break;
+                }
+            }
+            return info;
         }
 
         public sealed override float Width { get => base.Width; set => throw new Exception(ErrorMessage); }

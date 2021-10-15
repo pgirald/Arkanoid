@@ -7,8 +7,7 @@ namespace Arkanoid.Application.Utils.Components
     public class Container : Component
     {
         public Container()
-        {//Initially setup the position to avoid move each child
-            //you can also change the _position property to be protected
+        {
             _childs = new LinkedList<Component>();
         }
 

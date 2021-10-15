@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Arkanoid.Application.Utils.Textures
 {
-    public interface ITexturesContainer
+    public interface IDrawable
     {
         public IEnumerable<TextureComponent> Textures { get; }
     }

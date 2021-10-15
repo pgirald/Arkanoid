@@ -1,11 +1,13 @@
-﻿using Arkanoid.Application.App.Graphics.Textures.Projectiles;
+﻿using Arkanoid.Application.App.Graphics.Enums;
+using Arkanoid.Application.App.Graphics.Textures.Projectiles;
 using Arkanoid.Application.Utils.Collisions;
+using Arkanoid.Application.Utils.Components;
 using Microsoft.Xna.Framework.Input;
 using System;
 
 namespace Arkanoid.Application.App.Graphics.Textures.Paddles
 {
-    public class Paddle : CollideableComponent, IAnimatedComponent
+    public class Paddle : AnimatedTexture
     {
         public Paddle()
         {
@@ -16,29 +18,24 @@ namespace Arkanoid.Application.App.Graphics.Textures.Paddles
         private float RightBound;
         private Projectile _projectile;
 
-        protected override void Proceed(float trueSpeed)
+        public override void Move(float computedSpeed)
         {
             KeyboardState state = AppControls.State;
+            float direction = 0;
             if (state.IsKeyDown(AppControls.Right))
             {
-                X += trueSpeed;
-                if (_projectile.Resting)
-                {
-                    _projectile.FixToRight();
-                    _projectile.X += trueSpeed;
-                }
+                direction = 1;
             }
             if (state.IsKeyDown(AppControls.Left))
             {
-                X -= trueSpeed;
-                if (_projectile.Resting)
-                {
-                    _projectile.FixToLeft();
-                    _projectile.X -= trueSpeed;
-                }
+                direction = -1;
             }
+            X += computedSpeed * direction;
             if (_projectile.Resting)
             {
+                _projectile.X += computedSpeed * direction;
+                direction = direction == 0 ? 1 : direction;
+                _projectile.FixTo((ProjectileDirection)direction);
                 KeepProjectileInBounds();
             }
             if (state.IsKeyDown(AppControls.Action))
@@ -81,8 +78,9 @@ namespace Arkanoid.Application.App.Graphics.Textures.Paddles
 
         public override string TexturePath => "Paddle";
 
-        public override void OnContainerHit(Side side)
+        public override void OnCollision(Component collideable, CollisionInfo info)
         {
+            Side side = info.Side;
             switch (side)
             {
                 case Side.Left:
