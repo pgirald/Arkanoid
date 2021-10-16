@@ -1,6 +1,8 @@
-﻿using Arkanoid.Application.App.Graphics.Textures.Blocks;
+﻿using Arkanoid.Application.App.Graphics.Effects;
+using Arkanoid.Application.App.Graphics.Textures.Blocks;
 using Arkanoid.Application.Utils.Collisions;
 using Arkanoid.Application.Utils.Components;
+using Arkanoid.Application.Utils.Game.DynamicDrawing;
 using Arkanoid.Application.Utils.Textures;
 using Microsoft.Xna.Framework;
 using System;
@@ -8,7 +10,7 @@ using System.Collections.Generic;
 
 namespace Arkanoid.Application.App.Graphics
 {
-    public class BlockSet : TexturesContainer, ICollideable
+    public class BlockSet : TexturesContainer, ICollideable, IDrawer
     {
         private float _currentXPosition = 0;
         private float _currentYPosition = 0;
@@ -25,10 +27,16 @@ namespace Arkanoid.Application.App.Graphics
         {
             block.Container = this;
             block.Destroyed += OnChildBlockDestroyed;
+            block.ItemDropped += OnItemDropped;
             block.Left = _currentXPosition;
             block.Left += block.MarginLeft;
             block.Top = _currentYPosition;
             block.Top += block.MarginTop;
+        }
+
+        private void OnItemDropped(object sender, ItemDroppedEventArgs args)
+        {
+            DrawComponent?.Invoke(this, new DrawEventArgs { Draw = args.Effect });
         }
 
         private void Resize(Block block)
@@ -43,10 +51,6 @@ namespace Arkanoid.Application.App.Graphics
                 base.Height = block.Bottom + block.MarginBottom;
             }
         }
-
-        public LinkedListNode<ICollideable> ManagerKey { get; set; }
-
-        public Guid Key { get; set; }
 
         public void next()
         {
@@ -70,6 +74,7 @@ namespace Arkanoid.Application.App.Graphics
         {
             Block destroyedBlock = (Block)sender;
             destroyedBlock.Destroyed -= OnChildBlockDestroyed;
+            destroyedBlock.ItemDropped -= OnItemDropped;
             RemoveChild((Component)sender);
             if (_childs.Count == 0)
             {
@@ -101,5 +106,11 @@ namespace Arkanoid.Application.App.Graphics
         public sealed override float Height { get => base.Height; set => throw new Exception(ErrorMessage); }
 
         public sealed override Vector2 Size { get => base.Size; set => throw new Exception(ErrorMessage); }
+        
+        public LinkedListNode<CollideableInfo> CMKey { get; set; }
+
+        public LinkedListNode<IDrawer> ScenarioKey { get; set; }
+
+        public EventHandler<DrawEventArgs> DrawComponent { get; set; }
     }
 }

@@ -9,6 +9,7 @@ using Arkanoid.Application.Utils.Collisions;
 using Arkanoid.Application.Utils.Components;
 using Arkanoid.Application.Utils.Game;
 using Arkanoid.Application.Utils.Game.DynamicDrawing;
+using Arkanoid.Application.Utils.GeneralExtensions;
 using Microsoft.Xna.Framework;
 using System;
 using System.Collections.Generic;
@@ -17,26 +18,56 @@ namespace Arkanoid.Application.App
 {
     public class ArkanoidScenario : ScenarioTemplate
     {
-        public void ApplyEffect(CommandEffect effect)
+        public ArkanoidScenario()
         {
-
+            ApplyiedEffects = new LinkedList<KeyValuePair<string, EffectCommand>>();
+            ApplyiedCheckableEffects = new LinkedList<CheckableEffectCommand>();
         }
 
-        public void ApplyCeckableEffect(CheckableCommandEffect effect)
-        {
+        public LinkedList<KeyValuePair<string, EffectCommand>> ApplyiedEffects { get; private set; }
 
+        public LinkedList<CheckableEffectCommand> ApplyiedCheckableEffects { get; private set; }
+
+        public Paddle Paddle { get; private set; }
+
+        private LinkedListNode<Component> PaddleKey;
+
+        public Projectile Projectile { get; private set; }
+
+        public LinkedListNode<Component> ProjectileKey { get; private set; }
+
+        public BlockSet Blocks { get; private set; }
+
+        public void SetPaddle(Paddle newPaddle)
+        {
+            PassData(Paddle, newPaddle, PaddleKey);
+            newPaddle.Projectile = Projectile;
+            Paddle = newPaddle;
         }
 
-        public Paddle paddle { get; private set; }
+        public void SetProjectile(Projectile newProjectile)
+        {
+            PassData(Projectile, newProjectile, ProjectileKey);
+            Projectile.Destroyed -= OnProjectileDestroyed;
+            newProjectile.Destroyed += OnProjectileDestroyed;
+            Paddle.Projectile = newProjectile;
+            Projectile = newProjectile;
+        }
 
-        public Projectile projectile { get; private set; }
-
-        public BlockSet blocks { get; private set; }
+        private void PassData(Component oldComp, Component newComp, LinkedListNode<Component> Key)
+        {
+            newComp.AbsoluteX = oldComp.AbsoluteX;
+            newComp.AbsoluteY = oldComp.AbsoluteY;
+            Key.Value = newComp;
+            oldComp.Container = null;
+            newComp.Container = this;
+            CM.Replace((ICollideable)oldComp, (ICollideable)newComp);
+        }
 
         protected override void AddAnimatedComponents()
         {
-            AnimatedComponents.AddLast(paddle);
-            AnimatedComponents.AddLast(projectile);
+            PaddleKey = AnimatedComponents.AddLast(Paddle);
+            ProjectileKey = AnimatedComponents.AddLast(Projectile);
         }
 
         protected override ScenarioUtils CreateScenarioUtils()
@@ -46,33 +77,33 @@ namespace Arkanoid.Application.App
 
         protected override IEnumerable<Component> CreateGameItems()
         {
-            paddle = TexturesFactory.GetTextureClone<GunPaddle>();
-            projectile = TexturesFactory.GetTextureClone<Projectile>();
-            blocks = CreateSimpleBlocks();
-            yield return paddle;
-            yield return projectile;
-            yield return blocks;
+            Paddle = TexturesFactory.GetTextureClone<Paddle>();
+            Projectile = TexturesFactory.GetTextureClone<Projectile>();
+            Blocks = CreateSimpleBlocks();
+            yield return Paddle;
+            yield return Projectile;
+            yield return Blocks;
         }
 
         protected override void SetGameItems()
         {
-            projectile.Destroyed += OnProjectileDestroyed;
-            blocks.Destroyed += OnBlocksDestroyed;
-            paddle.Align(Alignment.BottomCenter);
-            blocks.Align(Alignment.TopCenter);
-            projectile.PutOn(paddle, Alignment.TopCenter);
-            projectile.AbsoluteBottom -= 0.1f;
-            paddle.Projectile = projectile;
-            AddDrawer((IDrawer)paddle);
+            Projectile.Destroyed += OnProjectileDestroyed;
+            Blocks.Destroyed += OnBlocksDestroyed;
+            Paddle.Align(Alignment.BottomCenter);
+            Blocks.Align(Alignment.TopCenter);
+            Projectile.PutOn(Paddle, Alignment.TopCenter);
+            Projectile.AbsoluteBottom -= 0.1f;
+            Paddle.Projectile = Projectile;
+            AddDrawer(Blocks);
         }
 
         protected override void SubscribeToCM(CollisionManager CM)
         {
-            CM.SubscribeVarious(projectile, paddle, blocks, this);
-            CM.SubscribeToComponents(projectile, paddle, blocks, this);
-            CM.SubscribeToComponent(paddle, this);
-            CM.AddSpecial(projectile, paddle, new BounceUpBehaviour(projectile));
-            CM.AddSpecial(projectile, this, new KeepInsideBoundsBehaviour(projectile));
+            CM.SubscribeVarious(Projectile, Paddle, Blocks, this);
+            CM.SubscribeToComponents(Projectile, Paddle, Blocks, this);
+            CM.SubscribeToComponent(Paddle, this);
+            CM.AddSpecial(Projectile, Paddle, new BounceUpBehaviour(Projectile));
+            CM.AddSpecial(Projectile, this, new KeepInsideBoundsBehaviour(Projectile));
         }
 
         private void OnProjectileDestroyed(object sender, EventArgs args)
@@ -102,9 +133,11 @@ namespace Arkanoid.Application.App
 
         public override void Clear()
         {
+            ApplyiedEffects.ForAll(effect => effect.Value.Value.Disable());
+            ApplyiedCheckableEffects.Clear();
             base.Clear();
-            blocks.Destroyed -= OnBlocksDestroyed;
-            projectile.Destroyed -= OnProjectileDestroyed;
+            Blocks.Destroyed -= OnBlocksDestroyed;
+            Projectile.Destroyed -= OnProjectileDestroyed;
         }
 
         protected override IScenarioState GetInitialState()

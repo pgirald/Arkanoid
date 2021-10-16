@@ -11,26 +11,29 @@ namespace Arkanoid.Application.App.Graphics.Effects
 {
     public abstract class EffectItem : AnimatedTexture, IScenarioDraw
     {
-        private LinkedListNode<Component> Node;
+        public override string ParentPath => "Effects/";
 
-        protected abstract ApplyEffectBehaviour Behaviour { get; }
+        private LinkedListNode<Component> Node;
 
         public EffectItem()
         {
             Speed = 200f;
         }
 
-        public abstract CommandEffect Effect { get; }
+        public EffectCommand Effect { get; private set; }
 
-        public LinkedListNode<IScenarioDraw> ScenarioKey { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        protected abstract EffectCommand CreateEffect(ArkanoidScenarioUtils utils);
+
+        public LinkedListNode<IScenarioDraw> ScenarioKey { get; set; }
 
         public void Draw(ScenarioUtils utils)
         {
             ArkanoidScenarioUtils arkUtils = (ArkanoidScenarioUtils)utils;
+            Effect = CreateEffect(arkUtils);
             Node = arkUtils.AnimatedComponents.AddLast(this);
             utils.CM.Subscribe(this);
             utils.CM.SubscribeToComponents(this, arkUtils.Paddle, arkUtils.Scenario);
-            utils.CM.AddSpecial(this, arkUtils.Paddle, Behaviour);
+            utils.CM.AddSpecial(this, arkUtils.Paddle, new ApplyEffectBehaviour(this));
         }
 
         public void Erase(ScenarioUtils utils)
@@ -43,7 +46,7 @@ namespace Arkanoid.Application.App.Graphics.Effects
 
         public override void Move(GameInfo info)
         {
-            Y += info.ComputedSpeed;
+            AbsoluteY += info.ComputedSpeed;
         }
 
         public override void OnCollision(Component collideable, CollisionInfo info)

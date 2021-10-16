@@ -4,23 +4,19 @@ using Arkanoid.Application.Utils.Collisions;
 
 namespace Arkanoid.Application.App.Graphics.CollisionBehaviours
 {
-    public abstract class ApplyEffectBehaviour : SpecialBehaviour<Paddle>
+    public class ApplyEffectBehaviour : SpecialBehaviour<Paddle>
     {
-        public ApplyEffectBehaviour(EffectItem effectItem, ArkanoidScenario scenario)
+        public ApplyEffectBehaviour(EffectItem effectItem)
         {
             _effectItem = effectItem;
-            _scenario = scenario;
         }
 
         protected EffectItem _effectItem;
-        protected ArkanoidScenario _scenario;
-
-        public abstract void ApplyEffect();
 
         public override void OnCollision(Paddle component, CollisionInfo info)
         {
             _effectItem.Destroyed?.Invoke(_effectItem, null);
-            ApplyEffect();
+            _effectItem.Effect.Enable();
         }
     }
 }

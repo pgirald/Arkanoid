@@ -9,19 +9,40 @@ namespace Arkanoid.Application.Utils.Collisions
     {
         public CollisionManager()
         {
-            _subscribers = new LinkedList<ICollideable>();
+            _subscribers = new LinkedList<CollideableInfo>();
         }
 
-        private LinkedList<ICollideable> _subscribers;
+        private LinkedList<CollideableInfo> _subscribers;
 
-        public void Subscribe(ICollideable sub)
+        private void CheckIfIsSub(ICollideable sub)
         {
             if (IsSub(sub))
             {
                 throw new Exception("The specified component is already a subscriber");
             }
-            sub.ManagerKey = _subscribers.AddLast(sub);
-            sub.Key = Guid.NewGuid();
+        }
+
+        private void CheckIfIsNotSub(ICollideable sub)
+        {
+            if (!IsSub(sub))
+            {
+                throw new Exception("The specified component is not a sub");
+            }
+        }
+
+        private void CheckIfBothAreSub(ICollideable collideable1, ICollideable collideable2)
+        {
+            if (!BothAreSubs(collideable1, collideable2))
+            {
+                throw new Exception("One of the specified components is not a subscriber");
+            }
+        }
+
+        public void Subscribe(ICollideable sub)
+        {
+            CheckIfIsSub(sub);
+            CollideableInfo info = new CollideableInfo(sub, Guid.NewGuid());
+            sub.CMKey = _subscribers.AddLast(info);
         }
 
         public void SubscribeVarious(params ICollideable[] subs)
@@ -34,33 +55,34 @@ namespace Arkanoid.Application.Utils.Collisions
 
         public void Unsuscribe(ICollideable sub)
         {
-            if (!IsSub(sub))
-            {
-                throw new Exception("The specified component is not a subscriber");
-            }
+            CheckIfIsNotSub(sub);
             Remove(sub);
         }
 
         private void Remove(ICollideable sub)
         {
-            sub.Key = Guid.Empty;
-            _subscribers.Remove(sub.ManagerKey);
-            sub.ManagerKey = null;
-            sub.SuscribedToComponents.Clear();
-            sub.SpecialComponents.Clear();
+            CollideableInfo subInfo = sub.CMKey.Value;
+            subInfo.RemoveSubs();
+            subInfo.SpecialBehaviours.Clear();
+            _subscribers.Remove(sub.CMKey);
+            sub.CMKey = null;
         }
 
         public void LookForCollisions()
         {
             CollisionInfo info;
+            CollideableInfo collideableInfo;
+            CollideableInfo collisedInfo;
             _subscribers.ForAll(sub =>
             {
-                sub.Value.SuscribedToComponents.ForAll(collideable =>
+                collideableInfo = sub.Value;
+                collideableInfo.Subscribtions.ForAll(node =>
                 {
-                    info = collideable.Value.IntersectedWith((Component)sub.Value);
+                    collisedInfo = node.Value;
+                    info = collisedInfo.Collideable.IntersectedWith((Component)collideableInfo.Collideable);
                     if (info != null)
                     {
-                        Notify(sub.Value, collideable.Value, info);
+                        Notify(collideableInfo, collisedInfo, info);
                     }
                 });
             });
@@ -68,20 +90,14 @@ namespace Arkanoid.Application.Utils.Collisions
 
         public void AddSpecial(ICollideable collideable, ICollideable specialCollideable, ISpecialBehaviour behaviour)
         {
-            if (!BothAreSubs(collideable, specialCollideable))
-            {
-                throw new Exception("One of the specified components is not a subscriber");
-            }
-            collideable.SpecialComponents.Add(specialCollideable.Key, behaviour);
+            CheckIfBothAreSub(collideable, specialCollideable);
+            collideable.CMKey.Value.SpecialBehaviours.Add(specialCollideable.CMKey.Value.Key, behaviour);
         }
 
         public void SubscribeToComponent(ICollideable collideableSub, ICollideable collideable)
         {
-            if (!BothAreSubs(collideableSub, collideable))
-            {
-                throw new Exception("One of the specified components is not a subscriber");
-            }
-            collideableSub.SuscribedToComponents.AddLast(collideable);
+            CollideableInfo subInfo = collideableSub.CMKey.Value;
+            subInfo.AddSubscribtion(collideable);
         }
 
         public void SubscribeToComponents(ICollideable collideableSub, params ICollideable[] collideables)
@@ -94,29 +110,37 @@ namespace Arkanoid.Application.Utils.Collisions
 
         private bool IsSub(ICollideable collideable)
         {
-            return collideable.ManagerKey != null && collideable.ManagerKey.List == _subscribers;
+            return collideable.CMKey != null && collideable.CMKey.List == _subscribers;
         }
         private bool BothAreSubs(ICollideable collideable1, ICollideable collideable2)
         {
             return IsSub(collideable1) || IsSub(collideable2);
         }
 
-        private void Notify(ICollideable collideable, ICollideable collised, CollisionInfo info)
+        private void Notify(CollideableInfo collideableInfo, CollideableInfo collisedInfo, CollisionInfo info)
         {
             ISpecialBehaviour behaviour;
-            if (collideable.SpecialComponents.TryGetValue(collised.Key, out behaviour))
+            if (collideableInfo.SpecialBehaviours.TryGetValue(collisedInfo.Key, out behaviour))
             {
-                behaviour.OnCollision((Component)collised, info);
+                behaviour.OnCollision((Component)collisedInfo.Collideable, info);
             }
             else
             {
-                collideable.OnCollision((Component)collised, info);
+                collideableInfo.Collideable.OnCollision((Component)collisedInfo.Collideable, info);
             }
+        }
+
+        public void Replace(ICollideable oldColl, ICollideable newColl)
+        {
+            CheckIfIsNotSub(oldColl);
+            oldColl.CMKey.Value.Collideable = newColl;
+            newColl.CMKey = oldColl.CMKey;
+            oldColl.CMKey = null;
         }
 
         public void Clear()
         {
-            _subscribers.ForAll(node => Remove(node.Value));
+            _subscribers.ForAll(node => Remove(node.Value.Collideable));
         }
     }
 }

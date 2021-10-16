@@ -14,7 +14,7 @@ namespace Arkanoid.Application.App
 
         public GameOver(ScenarioTemplate scenario)
         {
-            GameOverMessage = TexturesFactory.GetTexture<GameOverMessage>().Clone<GameOverMessage>();
+            GameOverMessage = TexturesFactory.GetTextureClone<GameOverMessage>();
             GameOverMessage.Align(scenario, Alignment.MiddleCenter);
         }
 

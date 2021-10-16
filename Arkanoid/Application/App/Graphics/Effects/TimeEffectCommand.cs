@@ -2,9 +2,9 @@
 
 namespace Arkanoid.Application.App.Graphics.Effects
 {
-    public abstract class TimeCommandEffect : CheckableCommandEffect
+    public abstract class TimeEffectCommand : CheckableEffectCommand
     {
-        protected TimeCommandEffect(ArkanoidScenario scenario) : base(scenario)
+        protected TimeEffectCommand(ArkanoidScenario scenario) : base(scenario)
         {
             _elapsedTime = 0;
         }
@@ -14,12 +14,12 @@ namespace Arkanoid.Application.App.Graphics.Effects
         public override void Check(GameInfo info)
         {
             _elapsedTime += info.ElapsedFrameTime;
-            if (_elapsedTime > TimeLimit)
+            if (_elapsedTime > SecondsLimit)
             {
                 Disable();
             }
         }
 
-        public abstract float TimeLimit { get; }
+        public abstract float SecondsLimit { get; }
     }
 }

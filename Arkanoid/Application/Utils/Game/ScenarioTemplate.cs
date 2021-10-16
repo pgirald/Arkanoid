@@ -32,7 +32,7 @@ namespace Arkanoid.Application.Utils.Game
             };
         }
 
-        private CollisionManager CM;
+        protected CollisionManager CM { get; private set; }
 
         public virtual IEnumerable<TextureComponent> Textures => CurrentState.StateTextures(this);
 
@@ -46,6 +46,7 @@ namespace Arkanoid.Application.Utils.Game
         }
 
         public LinkedList<Component> AnimatedComponents { get; private set; }
+        public LinkedListNode<CollideableInfo> CMKey { get; set; }
 
         protected abstract IEnumerable<Component> CreateGameItems();
 
@@ -117,10 +118,6 @@ namespace Arkanoid.Application.Utils.Game
             SubscribeToCM(CM);
             CurrentState = GetInitialState();
         }
-
-        public LinkedListNode<ICollideable> ManagerKey { get; set; }
-
-        public Guid Key { get; set; }
 
         public void Restart()
         {

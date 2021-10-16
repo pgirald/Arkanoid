@@ -6,13 +6,7 @@ namespace Arkanoid.Application.Utils.Collisions
 {
     public interface ICollideable
     {
-        public LinkedListNode<ICollideable> ManagerKey { get; set; }
-
-        public Guid Key { get; set; }
-
-        public LinkedList<ICollideable> SuscribedToComponents => EmptyCollideableListsFactory.EmptyComponentsList;
-
-        public Dictionary<Guid, ISpecialBehaviour> SpecialComponents => EmptyCollideableListsFactory.EmptyCompsBehaviourDictionary;
+        public LinkedListNode<CollideableInfo> CMKey { get; set; }
 
         public void OnCollision(Component collideable, CollisionInfo info)
         {

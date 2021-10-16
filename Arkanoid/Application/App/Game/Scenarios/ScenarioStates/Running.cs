@@ -15,6 +15,7 @@ namespace Arkanoid.Application.App
                 info.ComputedSpeed = (float)(info.ElapsedFrameTime * animated.Speed);
                 animated.Move(info);
             });
+            ((ArkanoidScenario)scenario).ApplyiedCheckableEffects.ForAll(effect => effect.Value.Check(info));
             scenario.CheckForCollisions();
         }
 

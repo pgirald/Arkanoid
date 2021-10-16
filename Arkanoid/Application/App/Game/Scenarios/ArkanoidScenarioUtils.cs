@@ -14,10 +14,10 @@ namespace Arkanoid.Application.App.Game.Scenarios
             _arkScenario = (ArkanoidScenario)utils.Scenario;
         }
 
-        public Paddle Paddle => _arkScenario.paddle;
+        public Paddle Paddle => _arkScenario.Paddle;
 
-        public BlockSet Blocks => _arkScenario.blocks;
+        public BlockSet Blocks => _arkScenario.Blocks;
 
-        public Projectile Projectile => _arkScenario.projectile;
+        public Projectile Projectile => _arkScenario.Projectile;
     }
 }

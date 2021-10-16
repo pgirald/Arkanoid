@@ -39,8 +39,8 @@ namespace Arkanoid.Application.App.Graphics
 
             FirstTime = false;
 
-            Textures = new Dictionary<string, TextureComponent>(StringComparer.Create(CultureInfo.InvariantCulture, true));
-            Textures2D = new Dictionary<string, Texture2D>();
+            Textures = new Dictionary<string, TextureComponent>(StringComparer.Create(CultureInfo.InvariantCulture, false));
+            Textures2D = new Dictionary<string, Texture2D>(StringComparer.Create(CultureInfo.InvariantCulture, false));
             Texture2D texture;
 
             foreach (Type textureType in TextureTypes)
@@ -54,8 +54,8 @@ namespace Arkanoid.Application.App.Graphics
                 {
                     textureComponent.Texture = content.Load<Texture2D>(textureComponent.FullPath);
                     Textures2D.Add(textureComponent.FullPath, textureComponent);
-                    Textures.Add(textureType.FullName, textureComponent);
                 }
+                Textures.Add(textureType.FullName, textureComponent);
             }
         }
 
