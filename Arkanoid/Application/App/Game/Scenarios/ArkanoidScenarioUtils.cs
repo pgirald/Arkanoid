@@ -9,12 +9,9 @@ namespace Arkanoid.Application.App.Game.Scenarios
     {
         private ArkanoidScenario _arkScenario;
 
-        public ArkanoidScenarioUtils(ArkanoidScenario scenario, ScenarioUtils utils)
+        public ArkanoidScenarioUtils(ScenarioUtils utils) : base(utils)
         {
-            _arkScenario = scenario;
-            CM = utils.CM;
-            AnimatedComponents = utils.AnimatedComponents;
-            Scenario = scenario;
+            _arkScenario = (ArkanoidScenario)utils.Scenario;
         }
 
         public Paddle Paddle => _arkScenario.paddle;

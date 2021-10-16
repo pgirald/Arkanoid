@@ -12,7 +12,7 @@ namespace Arkanoid.Application.App
             scenario.AnimatedComponents.ForAll(animatedComp =>
             {
                 IAnimated animated = (IAnimated)animatedComp.Value;
-                info.ComputedSpeed = info.ElapsedFrameTime * animated.Speed;
+                info.ComputedSpeed = (float)(info.ElapsedFrameTime * animated.Speed);
                 animated.Move(info);
             });
             scenario.CheckForCollisions();

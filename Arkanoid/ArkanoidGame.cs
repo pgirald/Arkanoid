@@ -48,7 +48,7 @@ namespace Arkanoid
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
             // TODO: Add your update logic here
-            info.ElapsedFrameTime = (float)gameTime.ElapsedGameTime.TotalSeconds;
+            info.ElapsedFrameTime = gameTime.ElapsedGameTime.TotalSeconds;
             info.KeyboardState = Keyboard.GetState();
             Scenario.Run(info);
             base.Update(gameTime);
