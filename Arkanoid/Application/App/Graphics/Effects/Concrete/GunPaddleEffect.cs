@@ -8,6 +8,7 @@ namespace Arkanoid.Application.App.Graphics.Effects.Concrete
 
         public GunPaddleEffect(ArkanoidScenario scenario) : base(scenario)
         {
+            AddIncompatibleEffect<LongPaddleEffect>();
         }
 
         public override float SecondsLimit => 5;

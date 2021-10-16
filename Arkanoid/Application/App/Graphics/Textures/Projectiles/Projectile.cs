@@ -86,5 +86,10 @@ namespace Arkanoid.Application.App.Graphics.Textures.Projectiles
             _yDirection *= -1;
         }
 
+        public void SetDirections(Projectile projectile)
+        {
+            _xDirection = projectile._xDirection;
+            _yDirection = projectile._yDirection;
+        }
     }
 }

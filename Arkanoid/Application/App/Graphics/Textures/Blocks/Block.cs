@@ -1,5 +1,4 @@
 ﻿using Arkanoid.Application.App.Graphics.Effects;
-using Arkanoid.Application.App.Graphics.Textures.Effects;
 using Arkanoid.Application.Utils.Components;
 using Arkanoid.Application.Utils.Textures;
 using System;
@@ -8,7 +7,6 @@ namespace Arkanoid.Application.App.Graphics.Textures.Blocks
 {
     public class Block : TextureComponent
     {
-        static bool sw = true;
         public EventHandler<ItemDroppedEventArgs> ItemDropped;
 
         public override string ParentPath => "Blocks/";
@@ -25,12 +23,11 @@ namespace Arkanoid.Application.App.Graphics.Textures.Blocks
 
         public virtual void Hit()
         {
-            if (sw)
+            EffectItem effect = EffectItemsFactory.GetEffectItemRandomly();
+            if (effect != null)
             {
-                EffectItem effect = TexturesFactory.GetTextureClone<BulletItemEffect>();
                 effect.PutOn(this, Alignment.BottomCenter);
                 ItemDropped?.Invoke(this, new ItemDroppedEventArgs { Effect = effect });
-                sw = false;
             }
             Destroyed?.Invoke(this, null);
         }

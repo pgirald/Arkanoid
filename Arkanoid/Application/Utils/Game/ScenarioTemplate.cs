@@ -45,7 +45,19 @@ namespace Arkanoid.Application.Utils.Game
             CM.LookForCollisions();
         }
 
+        public void AddAnimated(IAnimated animated)
+        {
+            animated.AnimatedKey = AnimatedComponents.AddLast((Component)animated);
+        }
+
+        public void RemoveAnimated(IAnimated animated)
+        {
+            AnimatedComponents.Remove(animated.AnimatedKey);
+            animated.AnimatedKey = null;
+        }
+
         public LinkedList<Component> AnimatedComponents { get; private set; }
+
         public LinkedListNode<CollideableInfo> CMKey { get; set; }
 
         protected abstract IEnumerable<Component> CreateGameItems();

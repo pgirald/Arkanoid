@@ -4,7 +4,6 @@ using Arkanoid.Application.Utils.Collisions;
 using Arkanoid.Application.Utils.Components;
 using Arkanoid.Application.Utils.Game;
 using Arkanoid.Application.Utils.Game.DynamicDrawing;
-using System;
 using System.Collections.Generic;
 
 namespace Arkanoid.Application.App.Graphics.Effects
@@ -12,8 +11,6 @@ namespace Arkanoid.Application.App.Graphics.Effects
     public abstract class EffectItem : AnimatedTexture, IScenarioDraw
     {
         public override string ParentPath => "Effects/";
-
-        private LinkedListNode<Component> Node;
 
         public EffectItem()
         {
@@ -30,7 +27,7 @@ namespace Arkanoid.Application.App.Graphics.Effects
         {
             ArkanoidScenarioUtils arkUtils = (ArkanoidScenarioUtils)utils;
             Effect = CreateEffect(arkUtils);
-            Node = arkUtils.AnimatedComponents.AddLast(this);
+            arkUtils.Scenario.AddAnimated(this);
             utils.CM.Subscribe(this);
             utils.CM.SubscribeToComponents(this, arkUtils.Paddle, arkUtils.Scenario);
             utils.CM.AddSpecial(this, arkUtils.Paddle, new ApplyEffectBehaviour(this));
@@ -39,8 +36,7 @@ namespace Arkanoid.Application.App.Graphics.Effects
         public void Erase(ScenarioUtils utils)
         {
             ArkanoidScenario scenario = (ArkanoidScenario)utils.Scenario;
-            scenario.AnimatedComponents.Remove(Node);
-            Node = null;
+            scenario.RemoveAnimated(this);
             utils.CM.Unsuscribe(this);
         }
 

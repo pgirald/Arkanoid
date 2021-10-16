@@ -1,4 +1,5 @@
-﻿using Arkanoid.Application.Utils.Textures;
+﻿using Arkanoid.Application.App.Graphics.Effects;
+using Arkanoid.Application.Utils.Textures;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using System;
@@ -13,6 +14,7 @@ namespace Arkanoid.Application.App.Graphics
     {
         private static Dictionary<string, TextureComponent> Textures;
         private static Dictionary<string, Texture2D> Textures2D;
+
         private static bool FirstTime = true;
 
         private static Type[] TextureTypes
@@ -54,6 +56,10 @@ namespace Arkanoid.Application.App.Graphics
                 {
                     textureComponent.Texture = content.Load<Texture2D>(textureComponent.FullPath);
                     Textures2D.Add(textureComponent.FullPath, textureComponent);
+                }
+                if (textureComponent is EffectItem)
+                {
+                    EffectItemsFactory.AddItem((EffectItem)textureComponent);
                 }
                 Textures.Add(textureType.FullName, textureComponent);
             }

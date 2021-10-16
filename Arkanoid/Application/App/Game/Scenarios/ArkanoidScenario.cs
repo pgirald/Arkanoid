@@ -30,44 +30,44 @@ namespace Arkanoid.Application.App
 
         public Paddle Paddle { get; private set; }
 
-        private LinkedListNode<Component> PaddleKey;
-
         public Projectile Projectile { get; private set; }
-
-        public LinkedListNode<Component> ProjectileKey { get; private set; }
 
         public BlockSet Blocks { get; private set; }
 
         public void SetPaddle(Paddle newPaddle)
         {
-            PassData(Paddle, newPaddle, PaddleKey);
+            PassData(Paddle, newPaddle);
             newPaddle.Projectile = Projectile;
+            Paddle.LeaveProjectile();
             Paddle = newPaddle;
         }
 
         public void SetProjectile(Projectile newProjectile)
         {
-            PassData(Projectile, newProjectile, ProjectileKey);
+            newProjectile.SetDirections(Projectile);
+            PassData(Projectile, newProjectile);
             Projectile.Destroyed -= OnProjectileDestroyed;
             newProjectile.Destroyed += OnProjectileDestroyed;
             Paddle.Projectile = newProjectile;
             Projectile = newProjectile;
         }
 
-        private void PassData(Component oldComp, Component newComp, LinkedListNode<Component> Key)
+        private void PassData(Component oldComp, Component newComp)
         {
-            newComp.AbsoluteX = oldComp.AbsoluteX;
-            newComp.AbsoluteY = oldComp.AbsoluteY;
-            Key.Value = newComp;
             oldComp.Container = null;
             newComp.Container = this;
+            newComp.AbsoluteX = oldComp.AbsoluteX;
+            newComp.AbsoluteY = oldComp.AbsoluteY;
+            RemoveAnimated((IAnimated)oldComp);
+            AddAnimated((IAnimated)newComp);
+            ((IAnimated)newComp).Speed = ((IAnimated)oldComp).Speed;
             CM.Replace((ICollideable)oldComp, (ICollideable)newComp);
         }
 
         protected override void AddAnimatedComponents()
         {
-            PaddleKey = AnimatedComponents.AddLast(Paddle);
-            ProjectileKey = AnimatedComponents.AddLast(Projectile);
+            AddAnimated(Paddle);
+            AddAnimated(Projectile);
         }
 
         protected override ScenarioUtils CreateScenarioUtils()
@@ -120,9 +120,9 @@ namespace Arkanoid.Application.App
         private BlockSet CreateSimpleBlocks()
         {
             BlockSet blocks = new BlockSet();
-            for (int i = 9; i > 0; i--)
+            for (int i = 6; i > 0; i--)
             {
-                for (int j = 9; j > 0; j--)
+                for (int j = 5; j > 0; j--)
                 {
                     blocks.AddBlock<Block>(block => block.Color = Color.LightCoral);
                 }

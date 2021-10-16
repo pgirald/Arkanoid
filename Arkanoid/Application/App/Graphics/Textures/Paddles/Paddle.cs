@@ -82,6 +82,12 @@ namespace Arkanoid.Application.App.Graphics.Textures.Paddles
             }
         }
 
+        public void LeaveProjectile()
+        {
+            _projectile.RestStart -= OnProjetileRestStart;
+            _projectile = null;
+        }
+
         public override void OnCollision(Component collideable, CollisionInfo info)
         {
             Side side = info.Side;

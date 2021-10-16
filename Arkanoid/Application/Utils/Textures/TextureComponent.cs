@@ -6,7 +6,7 @@ using System.Collections.Generic;
 
 namespace Arkanoid.Application.Utils.Textures
 {
-    public class TextureComponent : Component, ICloneable, IDrawable
+    public class TextureComponent : Component, IDrawable
     {
         public TextureComponent()
         {
@@ -69,9 +69,11 @@ namespace Arkanoid.Application.Utils.Textures
             return textureComponent;
         }
 
-        public object Clone()
+        public TextureComponent Clone()
         {
-            return Clone<TextureComponent>();
+            TextureComponent texture = (TextureComponent)Activator.CreateInstance(GetType());
+            texture.Texture = _texture;
+            return texture;
         }
 
         public IEnumerable<TextureComponent> Textures
