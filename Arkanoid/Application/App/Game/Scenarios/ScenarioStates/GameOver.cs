@@ -11,11 +11,15 @@ namespace Arkanoid.Application.App
     public class GameOver : IScenarioState
     {
         private GameOverMessage GameOverMessage;
+        private RMessage rMessage;
 
         public GameOver(ScenarioTemplate scenario)
         {
             GameOverMessage = TexturesFactory.GetTextureClone<GameOverMessage>();
+            rMessage = TexturesFactory.GetTextureClone<RMessage>();
             GameOverMessage.Align(scenario, Alignment.MiddleCenter);
+            rMessage.PutOn(GameOverMessage, Alignment.BottomCenter);
+            rMessage.AbsoluteTop += 20;
         }
 
         public void SetateRun(ScenarioTemplate scenario, GameInfo info)
@@ -34,6 +38,7 @@ namespace Arkanoid.Application.App
         public IEnumerable<TextureComponent> StateTextures(ScenarioTemplate scenario)
         {
             yield return GameOverMessage;
+            yield return rMessage;
         }
     }
 }

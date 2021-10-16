@@ -1,4 +1,4 @@
-﻿using Arkanoid.Application.App;
+﻿using Arkanoid.Application.App.Game;
 using Arkanoid.Application.App.Graphics;
 using Arkanoid.Application.Utils.Game;
 using Arkanoid.Application.Utils.GeneralExtensions;
@@ -12,7 +12,7 @@ namespace Arkanoid
     {
         private GraphicsDeviceManager _graphics;
         private SpriteBatch _spriteBatch;
-        private ArkanoidScenario Scenario;
+        private World world;
         private GameInfo info;
 
         public ArkanoidGame()
@@ -26,12 +26,7 @@ namespace Arkanoid
         {
             // TODO: Add your initialization logic here
             info = new GameInfo();
-            Scenario = new ArkanoidScenario()
-            {
-                Width = _graphics.PreferredBackBufferWidth,
-                Height = _graphics.PreferredBackBufferHeight
-            };
-
+            world = new World(_graphics.PreferredBackBufferWidth, _graphics.PreferredBackBufferHeight);
             base.Initialize();
         }
 
@@ -39,7 +34,7 @@ namespace Arkanoid
         {
             _spriteBatch = new SpriteBatch(GraphicsDevice);
             TexturesFactory.Load(Content);
-            Scenario.Initialize();
+            world.Initialize();
             // TODO: use this.Content to load your game content here
         }
 
@@ -50,7 +45,7 @@ namespace Arkanoid
             // TODO: Add your update logic here
             info.ElapsedFrameTime = gameTime.ElapsedGameTime.TotalSeconds;
             info.KeyboardState = Keyboard.GetState();
-            Scenario.Run(info);
+            world.RunCurrent(info);
             base.Update(gameTime);
         }
 
@@ -62,7 +57,7 @@ namespace Arkanoid
             //_smily.draw(_spriteBatch, _smilyPosition);
 
             _spriteBatch.Begin();
-            _spriteBatch.Draw(Scenario);
+            _spriteBatch.Draw(world);
             _spriteBatch.End();
 
             base.Draw(gameTime);

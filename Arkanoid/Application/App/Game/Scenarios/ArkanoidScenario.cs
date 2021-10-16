@@ -1,8 +1,8 @@
 ﻿using Arkanoid.Application.App.Game.Scenarios;
+using Arkanoid.Application.App.Game.Scenarios.ScenarioStates;
 using Arkanoid.Application.App.Graphics;
 using Arkanoid.Application.App.Graphics.CollisionBehaviours;
 using Arkanoid.Application.App.Graphics.Effects;
-using Arkanoid.Application.App.Graphics.Textures.Blocks;
 using Arkanoid.Application.App.Graphics.Textures.Paddles;
 using Arkanoid.Application.App.Graphics.Textures.Projectiles;
 using Arkanoid.Application.Utils.Collisions;
@@ -10,7 +10,6 @@ using Arkanoid.Application.Utils.Components;
 using Arkanoid.Application.Utils.Game;
 using Arkanoid.Application.Utils.Game.DynamicDrawing;
 using Arkanoid.Application.Utils.GeneralExtensions;
-using Microsoft.Xna.Framework;
 using System;
 using System.Collections.Generic;
 
@@ -18,11 +17,20 @@ namespace Arkanoid.Application.App
 {
     public class ArkanoidScenario : ScenarioTemplate
     {
-        public ArkanoidScenario()
+        public ArkanoidScenario(BlockSet blocks, float width, float height)
         {
+            Width = width;
+            Height = height;
             ApplyiedEffects = new LinkedList<KeyValuePair<string, EffectCommand>>();
             ApplyiedCheckableEffects = new LinkedList<CheckableEffectCommand>();
+            Blocks = blocks;
+            InitialState = new Running();
+            FinalState = new NextStage(this);
         }
+
+        public IScenarioState InitialState { get; set; }
+
+        public IScenarioState FinalState { get; set; }
 
         public LinkedList<KeyValuePair<string, EffectCommand>> ApplyiedEffects { get; private set; }
 
@@ -80,7 +88,6 @@ namespace Arkanoid.Application.App
         {
             Paddle = TexturesFactory.GetTextureClone<Paddle>();
             Projectile = TexturesFactory.GetTextureClone<Projectile>();
-            Blocks = CreateSimpleBlocks();
             yield return Paddle;
             yield return Projectile;
             yield return Blocks;
@@ -91,7 +98,7 @@ namespace Arkanoid.Application.App
             Projectile.Destroyed += OnProjectileDestroyed;
             Blocks.Destroyed += OnBlocksDestroyed;
             Paddle.Align(Alignment.BottomCenter);
-            Blocks.Align(Alignment.TopCenter);
+            //Blocks.Align(Alignment.TopCenter);
             Projectile.PutOn(Paddle, Alignment.TopCenter);
             Projectile.AbsoluteBottom -= 0.1f;
             Paddle.Projectile = Projectile;
@@ -114,22 +121,8 @@ namespace Arkanoid.Application.App
 
         private void OnBlocksDestroyed(object sender, EventArgs args)
         {
-            CurrentState = new GameFinished(this);
+            CurrentState = FinalState;
             Clear();
-        }
-
-        private BlockSet CreateSimpleBlocks()
-        {
-            BlockSet blocks = new BlockSet();
-            for (int i = 9; i > 0; i--)
-            {
-                for (int j = 8; j > 0; j--)
-                {
-                    blocks.AddBlock<ToughBlock>();
-                }
-                blocks.next();
-            }
-            return blocks;
         }
 
         public override void Clear()
@@ -143,7 +136,7 @@ namespace Arkanoid.Application.App
 
         protected override IScenarioState GetInitialState()
         {
-            return new Running();
+            return InitialState;
         }
     }
 }
