@@ -21,7 +21,7 @@ namespace Arkanoid.Application.Utils.Textures
 
         public string FullPath => ParentPath + TexturePath;
 
-        public Texture2D Texture
+        public virtual Texture2D Texture
         {
             set
             {
@@ -37,7 +37,7 @@ namespace Arkanoid.Application.Utils.Textures
 
         public Vector2 Scale { get; set; }
 
-        public Rectangle? TrimRectangle { get; set; } = null;
+        public Rectangle? TrimRectangle { get; set; }
 
         public Rectangle Destination { get; set; }
 

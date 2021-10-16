@@ -45,6 +45,7 @@ namespace Arkanoid.Application.App
         public void SetProjectile(Projectile newProjectile)
         {
             newProjectile.SetDirections(Projectile);
+            newProjectile.Resting = Projectile.Resting;
             PassData(Projectile, newProjectile);
             Projectile.Destroyed -= OnProjectileDestroyed;
             newProjectile.Destroyed += OnProjectileDestroyed;
@@ -120,11 +121,11 @@ namespace Arkanoid.Application.App
         private BlockSet CreateSimpleBlocks()
         {
             BlockSet blocks = new BlockSet();
-            for (int i = 6; i > 0; i--)
+            for (int i = 9; i > 0; i--)
             {
-                for (int j = 5; j > 0; j--)
+                for (int j = 8; j > 0; j--)
                 {
-                    blocks.AddBlock<Block>(block => block.Color = Color.LightCoral);
+                    blocks.AddBlock<ToughBlock>();
                 }
                 blocks.next();
             }

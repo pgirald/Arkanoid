@@ -9,7 +9,7 @@ namespace Arkanoid.Application.App.Graphics.Effects
 
         private static Random NumberGenerator;
 
-        private const double Probability = 1;
+        private const double Probability = 0.2;
 
         static EffectItemsFactory()
         {

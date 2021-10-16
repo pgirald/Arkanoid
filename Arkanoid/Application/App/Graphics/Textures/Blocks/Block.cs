@@ -21,7 +21,7 @@ namespace Arkanoid.Application.App.Graphics.Textures.Blocks
 
         public float MarginBottom { get; set; } = 0;
 
-        public virtual void Hit()
+        protected virtual void TryItemGeneration()
         {
             EffectItem effect = EffectItemsFactory.GetEffectItemRandomly();
             if (effect != null)
@@ -29,6 +29,11 @@ namespace Arkanoid.Application.App.Graphics.Textures.Blocks
                 effect.PutOn(this, Alignment.BottomCenter);
                 ItemDropped?.Invoke(this, new ItemDroppedEventArgs { Effect = effect });
             }
+        }
+
+        public virtual void Hit()
+        {
+            TryItemGeneration();
             Destroyed?.Invoke(this, null);
         }
     }

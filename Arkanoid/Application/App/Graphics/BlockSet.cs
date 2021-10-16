@@ -63,9 +63,9 @@ namespace Arkanoid.Application.App.Graphics
             throw new Exception("Cannot add components to this container with this method");
         }
 
-        public void AddBlock<T>(Action<Block> initialize = null) where T : Block
+        public void AddBlock<T>(Action<Block> initialize = null) where T : Block, new()
         {
-            Block block = TexturesFactory.GetTexture<T>().Clone<Block>();
+            Block block = TexturesFactory.GetTextureClone<T>();
             initialize?.Invoke(block);
             _integrate(block);
         }
@@ -106,7 +106,7 @@ namespace Arkanoid.Application.App.Graphics
         public sealed override float Height { get => base.Height; set => throw new Exception(ErrorMessage); }
 
         public sealed override Vector2 Size { get => base.Size; set => throw new Exception(ErrorMessage); }
-        
+
         public LinkedListNode<CollideableInfo> CMKey { get; set; }
 
         public LinkedListNode<IDrawer> ScenarioKey { get; set; }
