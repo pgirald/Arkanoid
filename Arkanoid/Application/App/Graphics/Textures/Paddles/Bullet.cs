@@ -3,7 +3,6 @@ using Arkanoid.Application.Utils.Collisions;
 using Arkanoid.Application.Utils.Components;
 using Arkanoid.Application.Utils.Game;
 using Arkanoid.Application.Utils.Game.DynamicDrawing;
-using System;
 using System.Collections.Generic;
 
 namespace Arkanoid.Application.App.Graphics.Textures.Paddles

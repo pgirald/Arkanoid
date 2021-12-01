@@ -1,5 +1,4 @@
-﻿using Arkanoid.Application.Utils.Components;
-using System;
+﻿using System;
 using System.Collections.Generic;
 
 namespace Arkanoid.Application.Utils.Collisions

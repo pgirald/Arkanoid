@@ -19,7 +19,8 @@ namespace Arkanoid
         {
             _graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
-            IsMouseVisible = true;
+            IsMouseVisible = false;
+            _graphics.IsFullScreen = true;
         }
 
         protected override void Initialize()

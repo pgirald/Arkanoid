@@ -4,8 +4,10 @@ using Arkanoid.Application.App.Graphics.Textures.Blocks;
 using Arkanoid.Application.Utils.Components;
 using Arkanoid.Application.Utils.Game;
 using Arkanoid.Application.Utils.Textures;
+using Microsoft.Xna.Framework;
 using System;
 using System.Collections.Generic;
+using IDrawable = Arkanoid.Application.Utils.Textures.IDrawable;
 
 namespace Arkanoid.Application.App.Game
 {
@@ -34,7 +36,7 @@ namespace Arkanoid.Application.App.Game
 
         public void Initialize()
         {
-            ArkanoidScenario first = new ArkanoidScenario(CreateSimpleBlocks(this),Width,Height);
+            ArkanoidScenario first = new ArkanoidScenario(CreateSimpleBlocks(this), Width, Height);
             ArkanoidScenario second = new ArkanoidScenario(CreateSimpleBlocks(this), Width, Height);
             ArkanoidScenario final = new ArkanoidScenario(CreateSimpleBlocks(this), Width, Height);
             first.InitialState = new GameStart(first);
@@ -59,15 +61,19 @@ namespace Arkanoid.Application.App.Game
         private BlockSet CreateSimpleBlocks(Container parent)
         {
             BlockSet blocks = new BlockSet();
-            for (int i = 1; i > 0; i--)
+            for (int i = 9; i > 0; i--)
             {
-                for (int j = 1; j > 0; j--)
+                for (int j = 9; (i > 6) ? j < i : j >= i; j--)
                 {
-                    blocks.AddBlock<Block>();
+                    blocks.AddBlock<ToughBlock>(block =>
+                    {
+                        block.Color = i > 5 ? Color.Coral : Color.Aqua;
+                        block.MarginLeft = (9 - j) * ((j == 9) ? 8 : 0);
+                    });
                 }
                 blocks.next();
             }
-            blocks.Align(parent, Alignment.TopRight);
+            blocks.Align(parent, Alignment.TopCenter);
             return blocks;
         }
     }

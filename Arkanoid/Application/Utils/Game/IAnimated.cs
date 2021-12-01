@@ -6,7 +6,7 @@ namespace Arkanoid.Application.Utils.Game
 {
     public interface IAnimated : IDrawable
     {
-        public LinkedListNode<Component> AnimatedKey{ get; set; }
+        public LinkedListNode<Component> AnimatedKey { get; set; }
 
         public float Speed { get; set; }
 

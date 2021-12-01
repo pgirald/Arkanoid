@@ -1,5 +1,4 @@
-﻿using System;
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 namespace Arkanoid.Application.App.Graphics.Textures.Projectiles
 {
     public class StickyProjectile : Projectile
